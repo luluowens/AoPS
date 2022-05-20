@@ -1,15 +1,13 @@
-from pydoc import plainpager
-
-
 def encipher_fence(plaintext,numRails):
     '''encipher_fence(plaintext,numRails) -> str
     encodes plaintext using the railfence cipher
     numRails is the number of rails'''
     new_text = ""
-    for i in range(len(plaintext)):
+    while len(new_text) < len(plaintext) :
         for j in range(numRails) :
-            if i % numRails == numRails + 1 - j :
-                new_text += plaintext[i]
+            for i in range(len(plaintext)):
+                if i % numRails == numRails - 1 - j :
+                    new_text += plaintext[i]
     return new_text
 
 def decipher_fence(ciphertext,numRails):
