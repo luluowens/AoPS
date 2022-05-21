@@ -14,7 +14,18 @@ def decipher_fence(ciphertext,numRails):
     '''decipher_fence(ciphertext,numRails) -> str
     returns decoding of ciphertext using railfence cipher
     with numRails rails'''
-    # you have to fill in the rest!
+    new_text = [""] * len(ciphertext)
+    start = numRails - 1
+    index = start
+    for i in range(len(ciphertext)) :
+        if index >= len(ciphertext) :
+            index = start - 1
+            new_text[index] = ciphertext[i]
+            start -= 1
+        else :
+            new_text[index] = ciphertext[i]
+        index += numRails
+    return ''.join(new_text)
 
 def decode_text(ciphertext,wordfilename):
     '''decode_text(ciphertext,wordfilename) -> str
@@ -24,23 +35,25 @@ def decode_text(ciphertext,wordfilename):
 
 # test cases
 
-# enciphering
-print(encipher_fence("abcdefghi", 3))
-# should print: cfibehadg
-print(encipher_fence("This is a test.", 2))
-# should print: hsi  etTi sats.
-print(encipher_fence("This is a test.", 3))
-# should print: iiae.h  ttTss s
-print(encipher_fence("Happy birthday to you!", 4))
-# should print: pidtopbh ya ty !Hyraou
+# # enciphering
+# print(encipher_fence("abcdefghi", 3))
+# # should print: cfibehadg
+# print(encipher_fence("This is a test.", 2))
+# # should print: hsi  etTi sats.
+# print(encipher_fence("This is a test.", 3))
+# # should print: iiae.h  ttTss s
+# print(encipher_fence("Happy birthday to you!", 4))
+# # should print: pidtopbh ya ty !Hyraou
 
-# # deciphering
-# print(decipher_fence("hsi  etTi sats.",2))
-# # should print: This is a test.
-# print(decipher_fence("iiae.h  ttTss s",3))
-# # should print: This is a test.
-# print(decipher_fence("pidtopbh ya ty !Hyraou",4))
-# # should print: Happy birthday to you!
+# deciphering
+print(decipher_fence("dcgbfae",4))
+# should print: abcdefg
+print(decipher_fence("hsi  etTi sats.",2))
+# should print: This is a test.
+print(decipher_fence("iiae.h  ttTss s",3))
+# should print: This is a test.
+print(decipher_fence("pidtopbh ya ty !Hyraou",4))
+# should print: Happy birthday to you!
 
 # # decoding
 # print(decode_text(" cr  pvtl eibnxmo  yghu wou rezotqkofjsehad", 'wordlist.txt'))
