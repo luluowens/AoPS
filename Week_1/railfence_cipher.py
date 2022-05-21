@@ -60,7 +60,7 @@ def decode_text(ciphertext,wordfilename):
 
 # test cases
 
-enciphering
+# enciphering
 print(encipher_fence("abcdefghi", 3))
 # should print: cfibehadg
 print(encipher_fence("This is a test.", 2))
