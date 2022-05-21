@@ -1,5 +1,5 @@
 def findLengthTen() :
-    text = open("word_file.txt", "r")
+    text = open("wordlist.txt", "r")
     count = 0
     for line in text :
         if len(line) == 11 :

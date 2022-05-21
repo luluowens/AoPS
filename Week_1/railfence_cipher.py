@@ -31,7 +31,27 @@ def decode_text(ciphertext,wordfilename):
     '''decode_text(ciphertext,wordfilename) -> str
     attempts to decode ciphertext using railfence cipher
     wordfilename is a file with a list of valid words'''
-    # you have to fill in the rest!
+    count = 0
+    max = 0
+    text = open("wordlist.txt", "r")
+    deciphered = ""
+    for i in range() :
+        words = []
+        word = ""
+        new_text = decipher_fence(ciphertext, i)
+        for val in range(len(new_text)) :
+            if new_text[val] == " " :
+                words.append(word)
+                word = ""
+            elif new_text[val] != "," or new_text[val] != "." :
+                word += new_text[val]
+        for word in words :
+            if word in text :
+                count += 1
+        if count >= max :
+            deciphered = new_text
+    text.close()
+    return deciphered
 
 # test cases
 
@@ -45,18 +65,18 @@ def decode_text(ciphertext,wordfilename):
 # print(encipher_fence("Happy birthday to you!", 4))
 # # should print: pidtopbh ya ty !Hyraou
 
-# deciphering
-print(decipher_fence("dcgbfae",4))
-# should print: abcdefg
-print(decipher_fence("hsi  etTi sats.",2))
-# should print: This is a test.
-print(decipher_fence("iiae.h  ttTss s",3))
-# should print: This is a test.
-print(decipher_fence("pidtopbh ya ty !Hyraou",4))
-# should print: Happy birthday to you!
+# # deciphering
+# print(decipher_fence("dcgbfae",4))
+# # should print: abcdefg
+# print(decipher_fence("hsi  etTi sats.",2))
+# # should print: This is a test.
+# print(decipher_fence("iiae.h  ttTss s",3))
+# # should print: This is a test.
+# print(decipher_fence("pidtopbh ya ty !Hyraou",4))
+# # should print: Happy birthday to you!
 
-# # decoding
-# print(decode_text(" cr  pvtl eibnxmo  yghu wou rezotqkofjsehad", 'wordlist.txt'))
-# # should print: the quick brown fox jumps over the lazy dog
-# print(decode_text("unt S.frynPs aPiosse  Aa'lgn lt noncIniha ", 'wordlist.txt'))
-# # should print... we'll let you find out!
+# decoding
+print(decode_text(" cr  pvtl eibnxmo  yghu wou rezotqkofjsehad", 'wordlist.txt'))
+# should print: the quick brown fox jumps over the lazy dog
+print(decode_text("unt S.frynPs aPiosse  Aa'lgn lt noncIniha ", 'wordlist.txt'))
+# should print... we'll let you find out!
