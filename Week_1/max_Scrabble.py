@@ -13,6 +13,7 @@ def maxScrabble() :
                 score = curr_score
                 word = line
             curr_score = 0
+    text.close()
     return word
 
 print(maxScrabble())
