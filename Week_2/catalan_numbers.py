@@ -1,4 +1,6 @@
 def catNum(degree) :
+    '''catalan(n) -> int
+    returns C_n, the nth Catalan number'''
     cat_list = [1, 1, 2]
     for i in range(2, degree + 1) :
         total = 0

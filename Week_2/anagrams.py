@@ -1,6 +1,6 @@
 def anagrams(input):
-    '''permute(inputList) -> list
-    returns list of all permutations of inputList'''
+    '''anagrams(input) -> list
+    returns list of all correct anagrams of input'''
     inputList = []
     for i in range(len(input)) :
         inputList.append(input[i])
