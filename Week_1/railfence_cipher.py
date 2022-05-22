@@ -56,51 +56,43 @@ def decode_text(ciphertext,wordfilename):
     count = 0
     max = 1
     deciphered = ""
+    text = open(wordfilename, "r")
+    all_words = text.read()
+    all_words.split("\n")
     for i in range(2, 11) :
-        text = open(wordfilename, "r")
-        words = []
-        word = ""
         new_text = decipher_fence(ciphertext, i)
-        for val in range(len(new_text)) :
-            if new_text[val] == " " :
-                words.append(word)
-                word = ""
-            elif new_text[val] != "," or new_text[val] != "." :
-                word += new_text[val]
-        words.append(word)
-        for line in text :
-            for word in words :
-                new_line = line.strip()
-                if word == new_line :
-                    count += 1
+        words = new_text.split()
+        for word in words :
+            if word.strip(",.!?") in all_words :
+                count += 1
         if count >= max :
             deciphered = new_text
             max = count
         count = 0
-        text.close()
+    text.close()
     return deciphered
 
 # test cases
 
-# enciphering
-print(encipher_fence("abcdefghi", 3))
-# should print: cfibehadg
-print(encipher_fence("This is a test.", 2))
-# should print: hsi  etTi sats.
-print(encipher_fence("This is a test.", 3))
-# should print: iiae.h  ttTss s
-print(encipher_fence("Happy birthday to you!", 4))
-# should print: pidtopbh ya ty !Hyraou
+# # enciphering
+# print(encipher_fence("abcdefghi", 3))
+# # should print: cfibehadg
+# print(encipher_fence("This is a test.", 2))
+# # should print: hsi  etTi sats.
+# print(encipher_fence("This is a test.", 3))
+# # should print: iiae.h  ttTss s
+# print(encipher_fence("Happy birthday to you!", 4))
+# # should print: pidtopbh ya ty !Hyraou
 
-# deciphering
-print(decipher_fence("dcgbfae",4))
-# should print: abcdefg
-print(decipher_fence("hsi  etTi sats.",2))
-# should print: This is a test.
-print(decipher_fence("iiae.h  ttTss s",3))
-# should print: This is a test.
-print(decipher_fence("pidtopbh ya ty !Hyraou",4))
-# should print: Happy birthday to you!
+# # deciphering
+# print(decipher_fence("dcgbfae",4))
+# # should print: abcdefg
+# print(decipher_fence("hsi  etTi sats.",2))
+# # should print: This is a test.
+# print(decipher_fence("iiae.h  ttTss s",3))
+# # should print: This is a test.
+# print(decipher_fence("pidtopbh ya ty !Hyraou",4))
+# # should print: Happy birthday to you!
 
 # decoding
 print(decode_text(" cr  pvtl eibnxmo  yghu wou rezotqkofjsehad", 'wordlist.txt'))
