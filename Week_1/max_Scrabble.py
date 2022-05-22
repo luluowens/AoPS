@@ -1,3 +1,9 @@
+'''Write a Python program to find the highest scoring
+7-letter word from the wordlist.txt file that doesn't
+contain the letter 'Z'. Enter it as your answer below.
+There are two possible answers; either of them will be
+marked correct.'''
+
 def maxScrabble() :
     '''finds the highest scoring
     7-lettered word from the

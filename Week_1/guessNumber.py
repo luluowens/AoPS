@@ -1,5 +1,13 @@
 import random
 
+'''Write a program that implements a simple guessing game.
+The computer will randomly select an integer between 0 and 100 (inclusive),
+and the user will repeatedly try to guess the computer's number.
+The computer will tell the player whether her guess is too high or too low,
+and will tell the user when she's guessed the exact number.
+The program should also output the number of guesses that it took the
+player to guess the correct number.'''
+
 def guessNumber() :
     '''guessing_game(n) -> int
     plays a guessing game

@@ -1,3 +1,25 @@
+'''Part (a): Write a function encipher_fence.
+It takes two parameters: the first is a string to scramble,
+and the second is the number of rails. It should return the scrambled text.
+
+Part (b): Write a function decipher_fence.
+It takes two parameters: the first is a string to unscramble,
+and the second is the number of rails. It should return the original text.
+
+Part (c): Write a function decode_text.
+It should take two parameters, a text to decode and a filename
+for a file containing a list of English words.
+It should return a deciphered text, reversing the railfence cipher.
+This would be easy if you knew the number of rails involved.
+Without that knowledge, you can still break the code:
+try different rail numbers (2, 3, 4, etc.) until you get a text that
+consists of English words. (You can assume that the number of rails will
+not be more than 10.) Not every word in the coded text may appear in
+the wordlist (for example, proper names). You should return the text
+with the most words in it, according to your list of valid words.
+Also make sure you ignore punctuation when you look up words in the word list.
+You can use the file wordlist.txt to check the validity of words.'''
+
 def encipher_fence(plaintext,numRails):
     '''encipher_fence(plaintext,numRails) -> str
     encodes plaintext using the railfence cipher

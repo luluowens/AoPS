@@ -1,3 +1,8 @@
+'''There are two 3-digit numbers n having the property that n
+is divisible by 11 and n/11 is equal to the sum of the squares
+of the digits of n. Find both values of $n.$ You may submit them
+in either order.'''
+
 def findNums() :
     '''There are two 3-digit numbers n
     having the property that n is

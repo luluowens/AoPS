@@ -1,3 +1,5 @@
+'''Count the number of 10-letter words in the file.'''
+
 def findLengthTen() :
     '''finds the number of words
     that have a length of ten

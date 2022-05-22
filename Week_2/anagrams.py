@@ -1,3 +1,21 @@
+'''The Jumble puzzle is a popular feature in many newspapers.
+In a Jumble, the reader is presented with 5 or 6 letters that have
+to be unscrambled to form a word. For example, the reader might be given DIWSMO,
+and has to unscramble them to form the word WISDOM.
+
+Modify your permute() function from part (a) to make a new function
+anagrams() that returns a list of all the anagrams of an input string.
+(An anagram of a string is a string with the same characters as the
+original string, but in any order. For example, some anagrams of "stop"
+are "pots", "tops", "spot", and "ostp".)
+
+Then write a function jumble_solve() that takes as input a string and
+returns a list of all the valid words that are anagrams of the input. 
+Your output does not have to match the upper/lower case of the input.
+(You should use your anagrams() function.) You can use the wordlist.txt
+file to check the validity of words -- this file is at
+http://artofproblemsolving.com/assets/pythonbook/_static/files/wordlist.txt'''
+
 def anagrams(input):
     '''anagrams(input) -> list
     returns list of all correct anagrams of input'''

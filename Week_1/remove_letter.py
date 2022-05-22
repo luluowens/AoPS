@@ -1,3 +1,9 @@
+'''Write a function remove_letter(string,letter)
+that removes all occurrences of letter from string.
+For example, remove_letter('This is a test','t') would return
+'This is a es' and remove_letter('Hello World!','l') would return
+'Heo Word!' '''
+
 def remove_letter(string, letter):
     '''remove_letter(string,letter) -> str
     returns string with all occurrences of letter removed'''

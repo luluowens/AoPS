@@ -1,3 +1,13 @@
+'''Write a program that implements the reverse of the
+simple guessing game in part (a). In this game, the human
+player will randomly select an integer between 0 and 100 (inclusive),
+and the computer will repeatedly try to guess the person's number.
+The player will tell the computer whether its guess is too high or
+too low, and will tell the computer when it's guessed the exact number.
+The program should also output the number of guesses that it took the
+computer to guess the correct number.
+'''
+
 def guessNumber() :
     '''reverse_guessing_game(n) -> int
     plays the reverse guessing game

@@ -1,3 +1,8 @@
+'''Write a recursive function permute() whose argument is a list.
+The function should return a list of all possible re-orderings
+(also called permutations) of the argument. That is, the function
+should return a list of lists.'''
+
 def permute(inputList):
     '''permute(inputList) -> list
     returns list of all permutations of inputList'''
