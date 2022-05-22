@@ -1,6 +1,10 @@
 import random
 
 def guessNumber() :
+    '''guessing_game(n) -> int
+    plays a guessing game
+    Computer picks a number between 0 and n (inclusive)
+    Returns the number of guesses it takes'''
     num = int(random.randrange(100))
     count = 0
     

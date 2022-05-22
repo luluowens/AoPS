@@ -1,4 +1,9 @@
 def guessNumber() :
+    '''reverse_guessing_game(n) -> int
+    plays the reverse guessing game
+    Player pick a number between 0 and n (inclusive)
+    Computer tries to guess the number
+    Returns the number of guesses it takes'''
     count = 0
     left = 0
     right = 100

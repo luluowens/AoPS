@@ -1,4 +1,9 @@
 def findNums() :
+    '''There are two 3-digit numbers n
+    having the property that n is
+    divisible by 11 and n/11 is equal
+    to the sum of the squares of the
+    digits of n.'''
     x = 0
     y = 0
     for n in range(100, 1000) :
