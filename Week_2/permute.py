@@ -6,15 +6,15 @@ should return a list of lists.'''
 def permute(inputList):
     '''permute(inputList) -> list
     returns list of all permutations of inputList'''
-    if inputList[1] == None :
+    if len(inputList) == 1 :
         return inputList
     else :
         permutations = []
         new_list = inputList[0 : -1]
         past_perms = permute(new_list)
-        for perm in past_perms :
-            for i in range(len(perm)) :
-                permutations.append(perm.insert(i, inputList[-1]))
+        for j in len(past_perms) :
+            for i in range(len(past_perms[j])) :
+                permutations.append(past_perms[j].insert(i, inputList[-1]))
         return permutations
 
 # test cases
