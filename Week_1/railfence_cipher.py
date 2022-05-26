@@ -26,7 +26,7 @@ def encipher_fence(plaintext,numRails):
     numRails is the number of rails'''
     new_text = ""
     for i in range(numRails) :
-        new_text += plaintext[numRails - 1 - i:len(plaintext):numRails]
+        new_text += plaintext[numRails - 1 - i::numRails]
     return new_text
 
 def decipher_fence(ciphertext,numRails):

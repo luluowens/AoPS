@@ -10,11 +10,14 @@ def permute(inputList):
         return inputList
     else :
         permutations = []
-        new_list = inputList[0 : -1]
-        past_perms = permute(new_list)
-        for j in len(past_perms) :
-            for i in range(len(past_perms[j])) :
-                permutations.append(past_perms[j].insert(i, inputList[-1]))
+        last_char = inputList.pop()
+        past_perms = permute(inputList)
+        if len(past_perms) == 1 :
+            return [past_perms + [last_char], [last_char] + past_perms]
+        for perm in past_perms :
+            for i in range(len(perm) + 1) :
+                new_perm = perm[0:i] + [last_char] + perm[i: len(perm) + 1]
+                permutations.append(new_perm)
         return permutations
 
 # test cases
