@@ -1,3 +1,22 @@
+'''You've just been named the new director of the United States Mint.
+For some reason, you've been authorized to do whatever you want
+with our coinage. You want to simplify our coins using the following criteria:
+
+1. There should be only three denominations of coins.
+You can keep any three existing denominations
+(for example, 1, 5, and 10; or 1, 10, and 25) or come up with new ones
+(for example, 1, 8, and 20).
+
+2. Assume that in any transaction, the number of cents given as change
+is equally likely to be any of the hundred quantities from 0 to 99,
+and always uses the minimum number of coins necessary.
+
+Your goal is to minimize the average number of coins that have to be given as change.
+
+For this part of the problem, write a Python program to answer the following question:
+If you decided to keep 1, 10, and 25 cent coins, what would be the
+average number of coins given as change?'''
+
 def coins() :
     total_num = 0
     for i in range(0, 100) :
