@@ -16,13 +16,30 @@ Your output does not have to match the upper/lower case of the input.
 file to check the validity of words -- this file is at
 http://artofproblemsolving.com/assets/pythonbook/_static/files/wordlist.txt'''
 
+def permute(inputList):
+    '''permute(inputList) -> list
+    returns list of all permutations of inputList'''
+    if len(inputList) == 1 :
+        return inputList
+    else :
+        permutations = []
+        last_char = inputList.pop()
+        past_perms = permute(inputList)
+        if len(past_perms) == 1 :
+            return [past_perms + [last_char], [last_char] + past_perms]
+        for perm in past_perms :
+            for i in range(len(perm) + 1) :
+                new_perm = perm[0:i] + [last_char] + perm[i: len(perm) + 1]
+                permutations.append(new_perm)
+        return permutations
+
 def anagrams(input):
     '''anagrams(input) -> list
     returns list of all correct anagrams of input'''
     inputList = []
     for i in range(len(input)) :
         inputList.append(input[i])
-    if inputList[1] == None :
+    if len(inputList) == 1 :
         return inputList
     else :
         text = open("wordlist.txt", "r")
