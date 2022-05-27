@@ -17,36 +17,46 @@ For this part of the problem, write a Python program to answer the following que
 If you decided to keep 1, 10, and 25 cent coins, what would be the
 average number of coins given as change?'''
 
-def coins() :
+def coins(denoms) :
     total_num = 0
+    vals = []
     for i in range(0, 100) :
-        leftover = i - (i // 25) * 25 - ((i % 25) // 10) * 10
-        num_coins = i // 25 + (i % 25) // 10 + leftover
-        total_num += num_coins
+        leftover = i - (i // denoms[0]) * denoms[0] - ((i % denoms[0]) // denoms[1]) * denoms[1]
+        num_coins = i // denoms[0] + (i % denoms[0]) // denoms[1] + leftover
+        num2 = (i // denoms[1]) + (i % denoms[1])
+        num3 = (i // denoms[0]) + (i % denoms[0])
+        vals = [num_coins, num2, num3]
+        total_num += min(vals)
     return total_num / 100
 
-def change(i) :
-    leftover = i - (i // 25) * 25 - ((i % 25) // 10) * 10
-    return i // 25 + (i % 25) // 10 + leftover
+def change(i, denoms) :
+    leftover = i - (i // denoms[0]) * denoms[0] - ((i % denoms[0]) // denoms[1]) * denoms[1]
+    num_coins = i // denoms[0] + (i % denoms[0]) // denoms[1] + leftover
+    num2 = (i // denoms[1]) + (i % denoms[1])
+    num3 = (i // denoms[0]) + (i % denoms[0])
+    vals = [num_coins, num2, num3]
+    return min(vals)
 
 
-# print(change(10))
+# print(change(10, [25, 10]))
 # # should be: 1
-# print(change(15))
+# print(change(15, [25, 10]))
 # # should be: 6
-# print(change(25))
+# print(change(25, [25, 10]))
 # # should be: 1
-# print(change(50))
+# print(change(50, [25, 10]))
 # # should be: 2
-# print(change(65))
+# print(change(65, [25, 10]))
 # # should be: 8
-# print(change(0))
+# print(change(0, [25, 10]))
 # # should be: 0
-# print(change(99))
+# print(change(99, [25, 10]))
 # # should be: 9
-# print(change(11))
+# print(change(11, [25, 10]))
 # # should be: 2
-print(change(35))
-# should be: 2
+# print(change(35, [25, 10]))
+# # should be: 2
+# print(change(44, [25, 10]))
+# # should be: 8
 
-# print(coins())
+print(coins([25, 10]))
