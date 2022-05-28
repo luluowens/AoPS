@@ -16,37 +16,35 @@ Your output does not have to match the upper/lower case of the input.
 file to check the validity of words -- this file is at
 http://artofproblemsolving.com/assets/pythonbook/_static/files/wordlist.txt'''
 
-# import re
 
 def angrms(input_list) :
-        '''angrms(input) -> list
-        returns list of all correct anagrams of input'''
-        if len(input_list) == 1:
-            return [input_list[:]]
-        # recursive step
-        outputList = []  # to store permutations
-        for index in range(len(input_list)):
-            # construct all permutations that start with the item
-            #   at location give by index
-            # remove item and permute the rest
-            restOfList = input_list[:index] + input_list[index+1:]
-            perms = angrms(restOfList)
-            # add all permutations starting with inputList[index]
-            #   and ending with each permutation just generated
-            for tail in perms:
-                outputList.append([input_list[index]] + tail)
-        return outputList
+    '''This code was adapted from the solution to problem 4 part a.
+    My own code for that problem did work, but I think that the one
+    given in the solution is more efficient and looks much less
+    cluttered.'''
+    if len(input_list) == 1:
+        return [input_list[:]]
+    # recursive step
+    outputList = []  # to store permutations
+    for index in range(len(input_list)):
+        # construct all permutations that start with the item
+        #   at location give by index
+        # remove item and permute the rest
+        restOfList = input_list[:index] + input_list[index+1:]
+        perms = angrms(restOfList)
+        # add all permutations starting with inputList[index]
+        #   and ending with each permutation just generated
+        for tail in perms:
+            outputList.append([input_list[index]] + tail)
+    return outputList
 
 def anagrams(input):
+    '''angrms(input) -> list
+        returns list of all correct anagrams of input'''
     input_list = []
     for i in range(len(input)) :
         input_list.append(input[i])
     words = angrms(input_list)
-    # corr_words = []
-    # for i in range(len(words)) :
-    #     word = "".join(words[i])
-    #     corr_words.append(word)
-    # p = "^" + "|".join(corr_words)
     perms = []
     text = open("wordlist.txt", "r")
     all_words = text.read()
@@ -65,6 +63,10 @@ def anagrams(input):
 
 
 print(anagrams("CHWAT"))
+# you get "WATCH"
 print(anagrams("RAROM"))
+# you get "ARMOR"
 print(anagrams("CEPLIN"))
+# you get "PENCIL"
 print(anagrams("YAFLIM"))
+# you get "FAMILY"
