@@ -17,26 +17,39 @@ For this part of the problem, write a Python program to answer the following que
 If you decided to keep 1, 10, and 25 cent coins, what would be the
 average number of coins given as change?'''
 
-def coins(denoms) :
-    total_num = 0
-    vals = []
-    for i in range(0, 100) :
-        leftover = i - (i // denoms[0]) * denoms[0] - ((i % denoms[0]) // denoms[1]) * denoms[1]
-        num_coins = i // denoms[0] + (i % denoms[0]) // denoms[1] + leftover
-        num2 = (i // denoms[1]) + (i % denoms[1])
-        num3 = (i // denoms[0]) + (i % denoms[0])
-        vals = [num_coins, num2, num3]
-        total_num += min(vals)
-    return total_num / 100
 
-def change(i, denoms) :
-    leftover = i - (i // denoms[0]) * denoms[0] - ((i % denoms[0]) // denoms[1]) * denoms[1]
-    num_coins = i // denoms[0] + (i % denoms[0]) // denoms[1] + leftover
-    num2 = (i // denoms[1]) + (i % denoms[1])
-    num3 = (i // denoms[0]) + (i % denoms[0])
-    vals = [num_coins, num2, num3]
-    return min(vals)
+def changes(value, denoms, value_coins) :
+    if value == 0 :
+        return 0 
+    elif value in value_coins :
+        return value_coins[value]
+    else :
+        return 1 + min([changes(value - denom, denoms, value_coins) for denom in denoms if value >= denom])
 
+def coins(max, denoms, value_coins) :
+    total_coins = 0
+    for value in range(max) :
+        coins = changes(value, denoms, value_coins)
+        value_coins.update({value: coins})
+        # print(f'value:{value}, coins:{coins}')
+        total_coins += coins
+    return total_coins / max
+
+def minimum() :
+    min_val = 5.4
+    d_1 = 10
+    d_2 = 25
+    min_coins = 0
+    for denom_1 in range(3, 100) :
+        for denom_2 in range(2, denom_1) :
+            value_coins = {}
+            denoms = [1, denom_1, denom_2]
+            min_coins = coins(100, denoms, value_coins)
+            if min_coins <= min_val :
+                min_val = min_coins
+                d_1 = denom_1
+                d_2 = denom_2
+    return "1, " + str(d_1) + ", " + str(d_2)
 
 # print(change(10, [25, 10]))
 # # should be: 1
@@ -48,15 +61,11 @@ def change(i, denoms) :
 # # should be: 2
 # print(change(65, [25, 10]))
 # # should be: 8
-# print(change(0, [25, 10]))
-# # should be: 0
-# print(change(99, [25, 10]))
-# # should be: 9
-# print(change(11, [25, 10]))
-# # should be: 2
 # print(change(35, [25, 10]))
 # # should be: 2
 # print(change(44, [25, 10]))
 # # should be: 8
 
-print(coins([25, 10]))
+# print(coins(100, [25, 10, 1]))
+# print(minimum())
+print(coins(100, [19, 12, 1], {}))
