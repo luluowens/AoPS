@@ -41,17 +41,14 @@ def angrms(input_list) :
 def anagrams(input):
     '''angrms(input) -> list
         returns list of all correct anagrams of input'''
-    input_list = []
-    for i in range(len(input)) :
-        input_list.append(input[i])
+    input_list = [char for char in input]
     words = angrms(input_list)
     perms = []
     text = open("wordlist.txt", "r")
-    all_words = text.read()
-    poss_words = all_words.split("\n")
+    all_words = text.read().split("\n")
     for i in range(len(words)) :
         word = "".join(words[i])
-        if word.lower() in poss_words :
+        if word.lower() in all_words :
             perms.append(word)
     text.close()
     return list(set(perms))
