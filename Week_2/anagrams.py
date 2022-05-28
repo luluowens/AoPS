@@ -16,48 +16,55 @@ Your output does not have to match the upper/lower case of the input.
 file to check the validity of words -- this file is at
 http://artofproblemsolving.com/assets/pythonbook/_static/files/wordlist.txt'''
 
-def permute(inputList):
-    '''permute(inputList) -> list
-    returns list of all permutations of inputList'''
-    if len(inputList) == 1 :
-        return inputList
-    else :
-        permutations = []
-        last_char = inputList.pop()
-        past_perms = permute(inputList)
-        if len(past_perms) == 1 :
-            return [past_perms + [last_char], [last_char] + past_perms]
-        for perm in past_perms :
-            for i in range(len(perm) + 1) :
-                new_perm = perm[0:i] + [last_char] + perm[i: len(perm) + 1]
-                permutations.append(new_perm)
-        return permutations
+# import re
+
+def angrms(input_list) :
+        '''angrms(input) -> list
+        returns list of all correct anagrams of input'''
+        if len(input_list) == 1:
+            return [input_list[:]]
+        # recursive step
+        outputList = []  # to store permutations
+        for index in range(len(input_list)):
+            # construct all permutations that start with the item
+            #   at location give by index
+            # remove item and permute the rest
+            restOfList = input_list[:index] + input_list[index+1:]
+            perms = angrms(restOfList)
+            # add all permutations starting with inputList[index]
+            #   and ending with each permutation just generated
+            for tail in perms:
+                outputList.append([input_list[index]] + tail)
+        return outputList
 
 def anagrams(input):
-    '''anagrams(input) -> list
-    returns list of all correct anagrams of input'''
-    inputList = []
+    input_list = []
     for i in range(len(input)) :
-        inputList.append(input[i])
-    if len(inputList) == 1 :
-        return inputList
-    else :
-        text = open("wordlist.txt", "r")
-        permutations = []
-        new_list = inputList[0 : -1]
-        past_perms = anagrams(new_list)
-        for perm in past_perms :
-            for i in range(len(perm)) :
-                word = perm.insert(i, inputList[-1])
-                for line in text :
-                    new_line = line.strip()
-                    if word in new_line :
-                        permutations.append(word)
-        text.close()
-        return permutations
+        input_list.append(input[i])
+    words = angrms(input_list)
+    # corr_words = []
+    # for i in range(len(words)) :
+    #     word = "".join(words[i])
+    #     corr_words.append(word)
+    # p = "^" + "|".join(corr_words)
+    perms = []
+    text = open("wordlist.txt", "r")
+    all_words = text.read()
+    poss_words = all_words.split("\n")
+    for i in range(len(words)) :
+        word = "".join(words[i])
+        if word.lower() in poss_words :
+            perms.append(word)
+    text.close()
+    return list(set(perms))
 
 # test cases
+# print(angrms(["D", "I", "W", "S", "M", "O"]))
+# print(anagrams("DIWSMO"))
+# should print WISDOM
+
+
 print(anagrams("CHWAT"))
-# should print [[1,2], [2,1]] in some order
 print(anagrams("RAROM"))
-# should print [[1,2,3], [1,3,2], [2,1,3], [3,1,2], [2,3,1], [3,2,1]] in some order
+print(anagrams("CEPLIN"))
+print(anagrams("YAFLIM"))
