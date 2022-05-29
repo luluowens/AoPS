@@ -1,4 +1,6 @@
-'''This problem uses the Point class from Chapter 12 of the textbook.
+'''
+Part 1)
+This problem uses the Point class from Chapter 12 of the textbook.
 It's reproduced below for your convenience.
 
 Write a method p.slope(q) that returns the slope from p to q.
@@ -6,6 +8,14 @@ Write a method p.slope(q) that returns the slope from p to q.
 y-coordinates divided by the difference in their x-coordinates.)
 If the line between the two points is vertical (that is, the difference
 in the x-coordinates is 0), then it should return the string 'undefined'.
+
+Part 2)
+This problem uses the Point class from Chapter 12 of the textbook.
+It's reproduced below for your convenience.
+You'll also want your slope() method from part (a).
+
+Write a method r.is_on(p,q) that returns True if the point represented
+by r is on the line through points p and q, and False if it is not.
 '''
 
 class Point:
