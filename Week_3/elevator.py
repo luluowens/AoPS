@@ -1,3 +1,17 @@
+'''Elevators transport people! Let's add that functionality to our Elevator class.
+Modify our Elevator class from this week's lesson as follows:
+Add an attribute passengers that is a list of strings representing the names of the people.
+(This will also require modifying the constructor method -- new elevators should start
+out empty of passengers.)
+Modify the __str__() method to also print the names of the passengers.
+Add methods get_on() and get_off() to allow passengers to get on and off.
+Of course, passengers can only get on and off if the doors are open!
+Make sure your methods do something appropriate if the doors are closed
+(for example, printing a message to that effect).
+Also make sure that get_off() does something appropriate if that person is not on the elevator.
+Be sure to write some examples to test your modifications.
+'''
+
 class Elevator:
     '''Represents a simple elevator'''
 
