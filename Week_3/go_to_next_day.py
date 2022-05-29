@@ -1,3 +1,9 @@
+'''I've started writing a class called Date
+whose objects represent dates (such as "June 11, 2014").
+
+Finish the go_to_next_day() method, which should increase the date by 1 day.
+'''
+
 class Date:
     '''class to represent a date'''
 
