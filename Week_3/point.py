@@ -1,3 +1,13 @@
+'''This problem uses the Point class from Chapter 12 of the textbook.
+It's reproduced below for your convenience.
+
+Write a method p.slope(q) that returns the slope from p to q.
+(Recall that the slope between two points is the difference in their
+y-coordinates divided by the difference in their x-coordinates.)
+If the line between the two points is vertical (that is, the difference
+in the x-coordinates is 0), then it should return the string 'undefined'.
+'''
+
 class Point:
     """ Point class represents and manipulates x,y coords. """
 
