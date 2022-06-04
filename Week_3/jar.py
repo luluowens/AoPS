@@ -27,22 +27,33 @@ and perform the necessary operations to result in the 5-liter jar containing exa
 class Jar :
 
     def __init__(self, jar_size) :
+        '''creates a jar with a set size
+        the initial amount of water in the jar is 0
+        '''
         self.size = jar_size
         self.amount = 0
 
     def __str__(self) :
-        answer = "a "
-        answer += str(self.size) + "-liter jar with "
-        answer += str(self.amount) + " liters of water"
-        return answer
+        '''creates a string that includes the jar size and amount
+        '''
+        return f'a {str(self.size)}-liter jar with {str(self.amount)} liters of water'
+
 
     def fill_jar(self) :
+        '''fills the jar to the top (max amount)
+        '''
         self.amount = self.size
 
     def empty_jar(self) :
+        '''empties the jar
+        '''
         self.amount = 0
 
     def pour(self, other_jar) :
+        '''pours as much liquid from one jar to another
+        if one jar has too much water, it fills the other
+        the remaining water stays in the initial jar
+        '''
         other_leftover = other_jar.size - other_jar.amount
         if self.amount <= other_leftover :
             other_jar.amount += self.amount
@@ -52,6 +63,8 @@ class Jar :
             self.amount -= other_leftover
 
 def get_4_liters() :
+    '''process for getting to a 5L jar with 4L of water
+    '''
     three_l = Jar(3)
     five_l = Jar(5)
     five_l.fill_jar()
