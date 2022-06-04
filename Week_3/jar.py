@@ -51,3 +51,16 @@ class Jar :
             other_jar.amount = other_jar.size
             self.amount -= other_leftover
 
+def get_4_liters() :
+    three_l = Jar(3)
+    five_l = Jar(5)
+    five_l.fill_jar()
+    five_l.pour(three_l)
+    three_l.empty_jar()
+    five_l.pour(three_l)
+    five_l.fill_jar()
+    five_l.pour(three_l)
+    print(three_l)
+    print(five_l)
+
+get_4_liters()
