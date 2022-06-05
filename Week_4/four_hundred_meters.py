@@ -1,3 +1,19 @@
+'''
+Modify the code below to create a multi-player version of 400 Meters game from this week's lesson,
+by writing a Player class that completes the code below.
+In particular, note that the Player class should have:
+
+- a constructor Player(name) that takes a player's name as its argument,
+
+- a string conversion method that prints the player's name, current score,
+and the number of rerolls remaining, and
+
+- a method take_turn() that plays one round of the game for that player.
+
+Your new Player class should work with the new version of the decathlon_400_meters()
+function written below.
+'''
+
 import random
 
 class Die:
