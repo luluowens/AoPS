@@ -1,3 +1,40 @@
+'''Write a class named Pokemon that represents a Pokemon monster.
+Every Pokemon should have the following attributes:
+
+1) name: a string. Because Pokemon are more than a collection of stats.
+
+2) health: an integer. Represents how much stamina the pokemon has left.
+This number should not fall below zero. If it is at zero, the pokemon has fainted.
+
+3) att: an integer. Represents how powerful the pokemon's attack is.
+(Don't name this 'attack' because we'll name a method that.)
+
+4) defense: an integer. Represents how well the pokemon avoids damage.
+
+Also write 4 methods:
+
+a) A constructor that takes 5 arguments: self and initial values for
+name, starting health, attack, and defense.
+
+b) A string representation: return a string of whatever makes sense to you.
+
+c) A calculate_damage() method that takes 2 arguments: self and another Pokemon object.
+The method returns the amount of damage self would inflict if it attacked the other Pokemon.
+Use the following formula:
+
+((12/5 * A/D) + 2)r
+where A is self's attack strength, D is the other Pokemon's defense,
+and r is a random floating point number from 0.85 to 1. Do not round yet.
+
+d) An attack() method that takes 2 arguments: self and another Pokemon object.
+The other Pokemon loses health equal to the above formula, rounded to the nearest integer.
+However, if the other Pokemon's health would drop zero or less, it merely goes to 0
+(and the Pokemon faints). If the Pokemon faints, print a message saying so.
+
+This is a simplified version of Pokemon without Pokemon type, weakness/resistance,
+attacks of different powers, speed, critical hits, levels, stat increases, items, etc.
+'''
+
 import random
 
 class Pokemon :

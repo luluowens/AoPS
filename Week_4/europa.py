@@ -1,13 +1,3 @@
-'''Add a method to the Die class from the lesson.
-The new method flips the die over.
-You can simulate this by replacing the top number on the die
-with the same position if we reversed the sides list.
-(You can assume that all the values on the Die are different.)
-
-For example, if a Die created with d = Die(8) has a 3 on top,
-then after d.flip(), d should have 6 on top.
-'''
-
 import random
 
 class Die:
@@ -52,7 +42,9 @@ class Die:
         if value in self.sides:
             self.top = value
 
-    def flip(self) :
-        opposite_sides = [self.sides[self.numSides - side] for side in range(self.numSides)]
-        index = self.sides.index(self.get_top)
-        self.set_top(opposite_sides[index])
+def europadice() :
+    values = []
+    e_die = Die([1, 2, 3, 4, "W"])
+    for i in range(10) :
+        values.append(e_die.roll())
+    
