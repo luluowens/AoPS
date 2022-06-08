@@ -43,12 +43,9 @@ class Fraction:
         gcd = math.gcd(self.num, self.denom)
         self.num = int(self.num / gcd)
         self.denom = int(self.denom / gcd)
-        if self.num < 0 and self.denom < 0 :
-            self.num = abs(self.num)
-            self.denom = abs(self.denom)
-        elif self.num < 0 or self.denom < 0 :
-            self.num = -1 * abs(self.num)
-            self.denom = abs(self.denom)
+        if self.denom < 0 :
+            self.num = -1 * self.num
+            self.denom = -1 * self.denom
 
     def __str__(self) :
         '''returns a string when looking for fraction
@@ -57,7 +54,7 @@ class Fraction:
         return f'{self.num}/{self.denom}'
 
     def __float__(self) :
-        return self.num / self.denom
+        return float(self.num / self.denom)
 
     def add(self, other) :
         num = self.num * other.denom + self.denom * other.num
@@ -110,10 +107,10 @@ print(p.div(q))  # should print -3/1
 print(p.eq(r))   # should print True
 print(p.eq(q))   # should print False
 ### if overloading using special methods
-print(p+q)  # should print 1/3
-print(p-q)  # should print 2/3
-print(p-p)  # should print 0/1
-print(p*q)  # should print -1/12
-print(p/q)  # should print -3/1
-print(p==r) # should print True
-print(p==q) # should print False
+# print(p+q)  # should print 1/3
+# print(p-q)  # should print 2/3
+# print(p-p)  # should print 0/1
+# print(p*q)  # should print -1/12
+# print(p/q)  # should print -3/1
+# print(p==r) # should print True
+# print(p==q) # should print False
