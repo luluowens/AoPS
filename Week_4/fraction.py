@@ -35,7 +35,7 @@ class Fraction:
         '''Fraction(num,denom) -> Fraction
         creates the fraction object representing num/denom'''
         if denom == 0: # raise an error if the denominator is zero
-            raise ZeroDivisionError
+            raise ZeroDivisionError()
         self.num = num
         self.denom = denom
 
