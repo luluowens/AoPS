@@ -89,6 +89,21 @@ class Fraction:
         other.simplify()
         return self.num == other.num and self.denom == other.denom
 
+    def __add__(self, other) :
+        return self.add(other)
+    
+    def __sub__(self, other) :
+        return self.sub(other)
+
+    def __mul__(self, other) :
+        return self.mul(other)
+
+    def __truediv__(self, other) :
+        return self.div(other)
+
+    def __eq__(self, other) :
+        return self.eq(other)
+
 # examples
 p = Fraction(3,6)
 print(p)  # should print 1/2
@@ -107,10 +122,10 @@ print(p.div(q))  # should print -3/1
 print(p.eq(r))   # should print True
 print(p.eq(q))   # should print False
 ### if overloading using special methods
-# print(p+q)  # should print 1/3
-# print(p-q)  # should print 2/3
-# print(p-p)  # should print 0/1
-# print(p*q)  # should print -1/12
-# print(p/q)  # should print -3/1
-# print(p==r) # should print True
-# print(p==q) # should print False
+print(p+q)  # should print 1/3
+print(p-q)  # should print 2/3
+print(p-p)  # should print 0/1
+print(p*q)  # should print -1/12
+print(p/q)  # should print -3/1
+print(p==r) # should print True
+print(p==q) # should print False
