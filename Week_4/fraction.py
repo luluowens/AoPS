@@ -40,6 +40,10 @@ class Fraction:
         self.denom = denom
 
     def simplify(self) :
+        '''extra function:
+        simplifies the fraction (eg. 3/6 -> 1/2)
+        also formats the negative sign properly
+        '''
         gcd = math.gcd(self.num, self.denom)
         self.num = int(self.num / gcd)
         self.denom = int(self.denom / gcd)
@@ -49,6 +53,7 @@ class Fraction:
 
     def __str__(self) :
         '''returns a string when looking for fraction
+        this string is formatted nicely
         '''
         self.simplify()
         return f'{self.num}/{self.denom}'
@@ -57,6 +62,8 @@ class Fraction:
         return float(self.num / self.denom)
 
     def add(self, other) :
+        '''adds other fraction to self fraction
+        '''
         num = self.num * other.denom + self.denom * other.num
         denom = self.denom * other.denom
         sum_fracs = Fraction(num, denom)
@@ -64,6 +71,8 @@ class Fraction:
         return sum_fracs
 
     def sub(self, other) :
+        '''subtracts other fraction from self fraction
+        '''
         num = self.num * other.denom - self.denom * other.num
         denom = self.denom * other.denom
         sub_fracs = Fraction(num, denom)
@@ -71,6 +80,8 @@ class Fraction:
         return sub_fracs
 
     def mul(self, other) :
+        '''multiplies self fraction by other fraction
+        '''
         num = self.num * other.num
         denom = self.denom * other.denom
         mul_fracs = Fraction(num, denom)
@@ -78,6 +89,8 @@ class Fraction:
         return mul_fracs
 
     def div(self, other) :
+        '''divides self fraction by other fraction
+        '''
         num = self.num * other.denom
         denom = self.denom * other.num
         div_fracs = Fraction(num, denom)
@@ -85,9 +98,14 @@ class Fraction:
         return div_fracs
 
     def eq(self, other) :
+        '''tests if self fraction is equal to other fraction
+        '''
         self.simplify()
         other.simplify()
         return self.num == other.num and self.denom == other.denom
+
+    '''The following methods allow us to use the +, -, *, /, and == symbols.
+    '''
 
     def __add__(self, other) :
         return self.add(other)
