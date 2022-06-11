@@ -45,7 +45,7 @@ class Pokemon :
         self.defense = poke_defense
     
     def __str__(self) :
-        return f'A {self.name} with {self.healh} health, {self.att} attack, and {self.defense} defense.'
+        return f'A {self.name} with {self.health} health, {self.att} attack, and {self.defense} defense.'
 
     def calculate_damage(self, other_pokemon) :
         return (12/5 * (self.att / other_pokemon.defense) + 2) * random.uniform(0.85, 1.0)
@@ -55,3 +55,75 @@ class Pokemon :
         if other_pokemon.health <= 0 :
             other_pokemon.health = 0
             print (f'The {other_pokemon.name} has fainted due to having no more health!')
+
+
+# Create 2 Pokemon
+b = Pokemon('Bulbasaur', 45, 49, 49)
+print(b)
+# Bulbasaur (45)
+# ATT: 49 DEF: 49
+c = Pokemon('Charmander', 39, 52, 43)
+print(c)
+# Charmander (39)
+# ATT: 52 DEF: 43
+ 
+# A couple attacks, notice that health drops
+c.attack(b)
+# Charmander does 4 damage!
+print(b)
+# Bulbasaur (41)
+# ATT: 49 DEF: 49
+b.attack(c)
+# Bulbasaur does 5 damage!
+print(c)
+# Charmander (34)
+# ATT: 52 DEF: 43
+ 
+# Really long battle sequence because level 1 Pokemon are weak
+c.attack(b)
+# Charmander does 4 damage!
+b.attack(c)
+# Bulbasaur does 4 damage!
+ 
+c.attack(b)
+# Charmander does 4 damage!
+b.attack(c)
+# Bulbasaur does 5 damage!
+ 
+c.attack(b)
+# Charmander does 4 damage!
+b.attack(c)
+# Bulbasaur does 4 damage!
+ 
+c.attack(b)
+# Charmander does 4 damage!
+b.attack(c)
+# Bulbasaur does 4 damage!
+ 
+c.attack(b)
+# Charmander does 4 damage!
+b.attack(c)
+# Bulbasaur does 5 damage!
+ 
+c.attack(b)
+# Charmander does 4 damage!
+b.attack(c)
+# Bulbasaur does 5 damage!
+ 
+c.attack(b)
+# Charmander does 4 damage!
+b.attack(c)
+# Bulbasaur does 5 damage!
+print(c)
+# Charmander (2)
+# ATT: 52 DEF: 43
+ 
+# Check that fainting works
+c.attack(b)
+# Charmander does 4 damage!
+print(b)
+# Bulbasaur (9)
+# ATT: 49 DEF: 49
+b.attack(c)
+# Bulbasaur does 5 damage!
+# Charmander has fainted!
