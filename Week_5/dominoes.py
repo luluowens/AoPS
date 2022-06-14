@@ -17,23 +17,53 @@ Implement the game as a solitaire game with a single human player and three comp
 The player should be able to see his/her own dominoes, and the entire chain,
 but naturally cannot see the computer players' dominoes.
 '''
+import random
 
+
+# domino class
 class Domino:
-    def __init__(self, first, second) :
-        '''initialize the first and second values of a domino
+    def __init__(self, val1, val2) :
+        '''initialize the values of a domino
         these two values need to be a number from 0 to 6
         '''
-        self.first = first
-        self.second = second
+        self.val1 = val1
+        self.val2 = val2
     
     def __str__(self) :
         '''returns a string for the domino
-        Eg. "2, 1"
+        Eg. "1, 2"
         '''
-        return f'{self.first}, {self.second}'
+        return f'{self.val1}, {self.val2}'
 
 
+# deck class
 class Deck:
+    def __init__(self) :
+        '''initialize the deck of dominoes with all of the possible values
+        '''
+        self.deck = []
+        for i in range(7) :
+            for j in range(i, 7) :
+                self.deck.append(Domino(i, j))
+        random.shuffle(self.deck)  # shuffle the deck
+    
+    def __str__(self) :
+        '''returns a string stating the number of dominoes left in deck
+        '''
+        return 'An deck of dominoes with '+str(len(self.deck))+' dominoes remaining.'
+    
+    def is_empty(self) :
+        '''check if deck is empty
+        '''
+        return len(self.deck) == 0
+
+    def deal_domino(self) :
+        '''deals out 1 domino
+        '''
+        return self.deck[random.randint(28)]
+
+
+class Chain:
     def __init__(self) :
         # code
         return 0
@@ -42,17 +72,8 @@ class Deck:
         # code
         return 0
 
-    def create_domino(self) :
-        # code
-        return 0
-    
-    def deal_domino(self) :
-        '''deals out 1 dominno
-        '''
-        # code
-        return 0
 
-
+# player class
 class Player:
     def __init__(self, deck) :
         '''initializes a player with their "hand" of 7 dominoes
@@ -60,10 +81,27 @@ class Player:
         self.hand = [deck.deal_domino() for i in range(7)]
 
     def __str__(self) :
+        '''returns a string stating the number of dominoes the player currently has
+        '''
+        return f'You have {len(self.deck)} dominoes left'
+
+    def play(self) :
+        # code 
+        return 0
+
+
+# computer class
+class Computer:
+    def __init__(self) :
+        # code
+        return 0
+
+    def __str__(self) :
         # code
         return 0
     
 
+# game
 def playDominoes() :
     # code
     return 0
