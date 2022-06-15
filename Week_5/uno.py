@@ -1,3 +1,26 @@
+'''Rules for simple Uno:
+
+- Played with a deck of 76 cards --
+there's one 0 and two of each of 1-9 in each of four colors (red, blue, yellow, green).
+
+- Each player gets 7 cards.
+
+- A single card from the deck is turned face up to start a discard pile.
+
+- Each player, in turn, must play a card that matches the top card of the discard pile
+either in number or in color. (For example, if the top card is "red 4", a player could play "red 9"
+or "blue 4".) The played card goes on top of the pile.
+
+- If a player can't play, they draw a card from the deck. If they can play the card just drawn,
+they do so; otherwise they add it to their hand. In either case, the player's turn is over.
+
+- If the deck runs out, we shuffle the discard pile (except for the top card) and use it as our new deck.
+
+- The first player to get rid of all of their cards wins.
+
+Write the Uno game using classes.
+'''
+
 import random
 
 class UnoCard:
