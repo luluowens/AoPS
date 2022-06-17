@@ -60,7 +60,9 @@ class Deck:
     def deal_domino(self) :
         '''deals out 1 domino
         '''
-        return self.deck[random.randint(28)]
+        dom = self.deck[random.randint(28)]
+        self.deck.remove(dom)
+        return dom
 
 
 class Chain:
