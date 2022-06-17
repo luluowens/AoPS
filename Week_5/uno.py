@@ -1,6 +1,6 @@
 '''Rules for simple Uno:
 
-- Played with a deck of 76 cards --
+- Played with a deck of 76 + 24 = 100 cards (with addition of action cards, see below) --
 there's one 0 and two of each of 1-9 in each of four colors (red, blue, yellow, green).
 
 - Each player gets 7 cards.
@@ -39,6 +39,7 @@ or any other card that is a Skip or is blue.
 '''
 
 import random
+from tkinter import TRUE
 
 class UnoCard:
     '''represents an Uno card
@@ -61,6 +62,7 @@ class UnoCard:
         returns True if the cards match in rank or color, False if not'''
         return (self.color == other.color) or (self.rank == other.rank)
 
+
 class UnoDeck:
     '''represents a deck of Uno cards
     attribute:
@@ -72,8 +74,12 @@ class UnoDeck:
         self.deck = []
         for color in ['red', 'blue', 'green', 'yellow']:
             self.deck.append(UnoCard(0,color))  # one 0 of each color
-            for n in range(1,10):  # two of each of 1-9 of each color
-                self.deck.append(UnoCard(n,color))
+            for i in range(2) :
+                for n in range(1,10):  # two of each of 1-9 of each color
+                    self.deck.append(UnoCard(n,color))
+                self.deck.append(UnoCard("skip",color))
+                self.deck.append(UnoCard("reverse",color))
+                self.deck.append(UnoCard("draw two",color))
         random.shuffle(self.deck)  # shuffle the deck
 
     def __str__(self):
@@ -98,6 +104,7 @@ class UnoDeck:
             return
         self.deck = pile.reset_pile() # get cards from the pile
         random.shuffle(self.deck)  # shuffle the deck
+
 
 class UnoPile:
     '''represents the discard pile in Uno
@@ -131,6 +138,7 @@ class UnoPile:
         newdeck = self.pile[:-1]
         self.pile = [self.pile[-1]]
         return newdeck
+
 
 class UnoPlayer:
     '''represents a player of Uno
@@ -189,63 +197,59 @@ class UnoPlayer:
         # print player info
         print(self.name+", it's your turn.")
         print(pile)
-        print("Your hand: ")
-        print(self.get_hand())
-        # get a list of cards that can be played
         topcard = pile.top_card()
-        matches = [card for card in self.hand if card.is_match(topcard)]
-        if len(matches) > 0:  # can play
-            for index, matches[index] in range(len(matches)):
-                # print the playable cards with their number
-                print(str(index+1) + ": " + str(matches[index]))
-            # get player's choice of which card to play
-            choice = 0
-            while choice < 1 or choice > len(matches):
-                choicestr = input("Which do you want to play? ")
-                if choicestr.isdigit():
-                    choice = int(choicestr)
-            # play the chosen card from hand, add it to the pile
-            self.play_card(matches[choice-1],pile)
-        else:  # can't play
-            print("You can't play, so you have to draw.")
-            input("Press enter to draw.")
-            # check if deck is empty -- if so, reset it
-            if deck.is_empty():
-                deck.reset_deck(pile)
-            # draw a new card from the deck
-            newcard = self.draw_card(deck)
-            print("You drew: "+str(newcard))
-            # check if card is a skip card
-            if newcard.rank == "skip" :
-                if newcard.is_match(topcard) :
+        # check if card is a skip card
+        if topcard.rank == "skip" and players.skip_used == False :
+            print("Your turn has been skipped! The next player will play.")
+            players.skip()
+        # check if card is a reverse card
+        elif topcard.rank == "reverse" and players.reverse_used == False :
+            print("The order has been reversed. It is no longer your turn.")
+            players.reverse_player()
+        # check if card is a draw 2 card
+        elif topcard.rank == "draw two" and players.draw2_used == False :
+            print("You have to draw 2 cards! Your turn to play will be skipped.")
+            players.draw_two(deck)
+        else :
+            print("Your hand: ")
+            print(self.get_hand())
+            # get a list of cards that can be played
+            matches = [card for card in self.hand if card.is_match(topcard)]
+            if len(matches) > 0:  # can play
+                for index in range(len(matches)):
+                    # print the playable cards with their number
+                    print(str(index+1) + ": " + str(matches[index]))
+                # get player's choice of which card to play
+                choice = 0
+                while choice < 1 or choice > len(matches):
+                    choicestr = input("Which do you want to play? ")
+                    if choicestr.isdigit():
+                        choice = int(choicestr)
+                if matches[choice - 1].rank == "skip" :
+                    players.skip_used = False
+                elif matches[choice - 1].rank == "reverse" :
+                    players.reverse_used = False
+                elif matches[choice - 1].rank == "draw two" :
+                    players.draw2_used = False
+                # play the chosen card from hand, add it to the pile
+                self.play_card(matches[choice-1],pile)
+            else:  # can't play
+                print("You can't play, so you have to draw.")
+                input("Press enter to draw.")
+                # check if deck is empty -- if so, reset it
+                if deck.is_empty():
+                    deck.reset_deck(pile)
+                # draw a new card from the deck
+                newcard = self.draw_card(deck)
+                print("You drew: "+str(newcard))
+                # for regular cards
+                if newcard.is_match(topcard): # can be played
                     print("Good -- you can play that!")
                     self.play_card(newcard,pile)
-                    players.skip_player()
                 else:   # still can't play
                     print("Sorry, you still can't play.")
-            # check if card is a reverse card
-            elif newcard.rank == "reverse" :
-                if newcard.is_match(topcard) :
-                    print("Good -- you can play that!")
-                    self.play_card(newcard,pile)
-                    players.reverse_player()
-                else:   # still can't play
-                    print("Sorry, you still can't play.")
-            # check if card is a draw 2 card
-            elif newcard.rank == "reverse" :
-                if newcard.is_match(topcard) :
-                    print("Good -- you can play that!")
-                    self.play_card(newcard,pile)
-                    players.draw_two(deck)
-                else:   # still can't play
-                    print("Sorry, you still can't play.")
-            # for regular cards
-            elif newcard.is_match(topcard): # can be played
-                print("Good -- you can play that!")
-                self.play_card(newcard,pile)
-            else:   # still can't play
-                print("Sorry, you still can't play.")
-            input("Press enter to continue.")
+                input("Press enter to continue.")
+
 
 class Players:
     def __init__(self) :
@@ -254,6 +258,9 @@ class Players:
         self.playerList = []
         self.currPlayer = 0
         self.nextPlayer = None
+        self.skip_used = True
+        self.reverse_used = True
+        self.draw2_used = True
 
     def __str__(self) :
         '''returns the names of the players
@@ -266,19 +273,20 @@ class Players:
     def add_player(self, player) :
         self.playerList.append(player)
 
-    def skip_player(self) :
-        self.currPlayer += 2
-        self.nextPlayer += 2
+    def skip(self) :
+        self.skip_used = True
 
     def reverse_player(self) :
         length = len(self.playerList)
         self.playerList = [self.playerList[length - x - 1] for x in range(length)]
+        self.currPlayer = (length - self.currPlayer) % length
+        self.reverse_used = True
 
     def draw_two(self, deck) :
-        self.playerList[self.currPlayer + 1].draw_card(deck)
-        self.currPlayer += 2
-        self.nextPlayer += 2
-        
+        self.playerList[self.currPlayer].draw_card(deck)
+        self.playerList[self.currPlayer].draw_card(deck)
+        self.draw2_used = True
+
 
 def play_uno(numPlayers):
     '''play_uno(numPlayers) -> None
@@ -303,7 +311,7 @@ def play_uno(numPlayers):
             print(player)
         print('-------')
         # take a turn
-        players.playerList[players.currPlayer].take_turn(deck,pile,players.playerList)
+        players.playerList[players.currPlayer].take_turn(deck,pile,players)
         # check for a winner
         if players.playerList[players.currPlayer].has_won():
             print(players.playerList[players.currPlayer].get_name()+" wins!")
@@ -311,3 +319,6 @@ def play_uno(numPlayers):
             break
         # go to the next player
         players.currPlayer = (players.currPlayer + 1) % numPlayers
+
+
+play_uno(4)
