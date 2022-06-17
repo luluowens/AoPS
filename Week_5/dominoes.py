@@ -60,7 +60,7 @@ class Deck:
     def deal_domino(self) :
         '''deals out 1 domino
         '''
-        val = random.randint(28)
+        val = random.randint(len(self.deck))
         return self.deck.pop(val)
 
 
