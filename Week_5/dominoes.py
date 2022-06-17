@@ -26,7 +26,7 @@ class Domino:
         '''initialize the values of a domino
         these two values need to be a number from 0 to 6
         '''
-        self.values = (value1, value2)
+        self.values = [value1, value2]
     
     def __str__(self) :
         '''returns a string for the domino
@@ -59,7 +59,7 @@ class Deck:
     def deal_domino(self) :
         '''deals out 1 domino
         '''
-        val = random.randint(0, len(self.deck))
+        val = random.randint(0, len(self.deck)-1)
         return self.deck.pop(val)
 
 
@@ -70,8 +70,8 @@ class Chain:
     def __str__(self) :
         ans = ""
         for i in range(len(self.chain) - 1) :
-            ans += self.chain[i] + ", "
-        return ans + self.chain[len(self.chain) - 1]
+            ans += str(self.chain[i]) + ", "
+        return ans + str(self.chain[len(self.chain) - 1])
 
     def add_dom(self, dom, side) :
         if side == "left" :
@@ -92,28 +92,35 @@ class Player:
     def __str__(self) :
         '''returns a string stating the number of dominoes the player currently has
         '''
-        return f'You have {len(self.deck)} dominoes left'
+        if len(self.hand) > 0 :
+            message = "Here are your remaining dominoes: "
+            for i in range(len(self.hand) - 1) :
+                dom = self.hand[i]
+                message += "[" + str(dom.values[0]) + ", " + str(dom.values[1]) + "]; "
+            message += "[" + str(self.hand[-1].values[0]) + ", "
+            return message + str(self.hand[-1].values[1]) + "]"
+        else :
+            return "You no longer have any dominoes."
 
     def can_move(self, chain) :
         for dom in self.hand :
-            if chain[0] in dom.values or chain[-1] in dom.values :
+            if chain.chain[0] in dom.values or chain.chain[-1] in dom.values :
                 return dom
         return None
 
     def move(self, dom, chain) :
-        if dom.val1 == chain[0] :
+        if dom.values[0] == chain.chain[0] :
             chain.add_dom([dom.values[1], dom.values[0]], "left")
-        elif dom.val2 == chain[0] :
+        elif dom.values[1] == chain.chain[0] :
             chain.add_dom([dom.values[0], dom.values[1]], "left")
-        elif dom.val1 == chain[-1] :
+        elif dom.values[1] == chain.chain[-1] :
             chain.add_dom([dom.values[0], dom.values[1]], "right")
         else :
             chain.add_dom([dom.values[1], dom.values[0]], "right")
+        self.hand.remove(dom)
 
     def has_won(self, chain) :
-        if self.can_move(chain) :
-            dom = self.can_move(chain)
-            self.move(dom,chain)
+        if len(self.hand) == 0 or len(chain.chain) == 56:
             return True
         return False
 
@@ -124,15 +131,30 @@ def playDominoes() :
     chain = Chain()
     human_player = Player(deck, 0)
     welcome_message = "Hello! These are your dominoes: "
-    for dom in range(len(human_player.hand) - 1) :
-        welcome_message += dom + ", "
-    print(welcome_message + human_player.hand[-1])
+    for i in range(len(human_player.hand) - 1) :
+        dom = human_player.hand[i]
+        welcome_message += "[" + str(dom.values[0]) + ", " + str(dom.values[1]) + "]; "
+    welcome_message += "[" + str(human_player.hand[-1].values[0]) + ", "
+    welcome_message += str(human_player.hand[-1].values[1]) + "]"
+    print(welcome_message)
     comp_player1 = Player(deck, 1)
     comp_player2 = Player(deck, 2)
     comp_player3 = Player(deck, 3)
     players = [human_player, comp_player1, comp_player2, comp_player3]
     curr_player = 0
+    for i in range(4) :
+        for dom in players[i].hand :
+            if dom.values[0] == 6 and dom.values[1] == 6 :
+                players[i].hand.remove(dom)
+                chain.add_dom([6, 6], "left")
+                curr_player = (i + 1) % 4
     while True:
+        print('-------')
+        print("Here is the current chain of dominoes: ")
+        print(chain)
+        print(human_player)
+        print('-------')
+
         player = players[curr_player]
         if player.has_won(chain) :
             if player == human_player :
@@ -151,4 +173,6 @@ def playDominoes() :
             dom = player.can_move(chain)
             player.move(dom,chain)
         curr_player = (curr_player + 1) % 4
-    return chain
+
+
+playDominoes()
