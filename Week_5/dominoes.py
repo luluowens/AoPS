@@ -61,7 +61,7 @@ class Deck:
         '''deals out 1 domino
         '''
         val = random.randint(28)
-        self.deck.pop(val)
+        return self.deck.pop(val)
 
 
 class Chain:
