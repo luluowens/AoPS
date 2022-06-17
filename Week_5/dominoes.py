@@ -65,43 +65,81 @@ class Deck:
 
 class Chain:
     def __init__(self) :
-        # code
-        return 0
+        self.chain = []
     
     def __str__(self) :
-        # code
-        return 0
+        ans = ""
+        for i in range(len(self.chain) - 1) :
+            ans += self.chain[i] + ", "
+        return ans + self.chain[len(self.chain) - 1]
+
+    def add_dom(self, dom, side) :
+        if side == "left" :
+            temp = self.chain
+            self.chain = dom + temp
+        else :
+            self.chain += dom
 
 
 # player class
 class Player:
-    def __init__(self, deck) :
+    def __init__(self, deck, player_num) :
         '''initializes a player with their "hand" of 7 dominoes
         '''
         self.hand = [deck.deal_domino() for i in range(7)]
+        self.num = player_num
 
     def __str__(self) :
         '''returns a string stating the number of dominoes the player currently has
         '''
         return f'You have {len(self.deck)} dominoes left'
 
-    def play(self) :
-        # code 
-        return 0
+    def can_move(self, chain) :
+        for dom in self.hand :
+            if dom.val1 == chain[0] or dom.val2 == chain[0] or dom.val1 == chain[-1] or dom.val2 == chain[-1] :
+                return dom
+        return None
 
+    def move(self, dom, chain) :
+        if dom.val1 == chain[0] :
+            chain.add_dom([dom.val2, dom.val1], "left")
+        elif dom.val2 == chain[0] :
+            chain.add_dom([dom.val1, dom.val2], "left")
+        elif dom.val1 == chain[-1] :
+            chain.add_dom([dom.val1, dom.val2], "right")
+        else :
+            chain.add_dom([dom.val2, dom.val1], "right")
 
-# computer class
-class Computer:
-    def __init__(self) :
-        # code
-        return 0
-
-    def __str__(self) :
-        # code
-        return 0
-    
 
 # game
 def playDominoes() :
-    # code
-    return 0
+    deck = Deck()
+    chain = Chain()
+    human_player = Player(deck, 0)
+    welcome_message = "Hello! These are your dominoes: "
+    for dom in range(len(human_player.hand) - 1) :
+        welcome_message += dom + ", "
+    print(welcome_message + human_player.hand[-1])
+    comp_player1 = Player(deck, 1)
+    comp_player2 = Player(deck, 2)
+    comp_player3 = Player(deck, 3)
+    players = [human_player, comp_player1, comp_player2, comp_player3]
+    curr_player = 0
+    while True:
+        player = players[curr_player]
+        if player.has_won() :
+            if player == human_player :
+                print("Congratulations! You won!")
+            else :
+                print("Sorry, but you lost. Try again next time.")
+            break
+        else :
+            count = 0
+            for i in range(4) :
+                if not players[i].can_move() :
+                    count += 1
+            if count == 4 :
+                break
+        if player.can_move() :
+            player.play()
+        curr_player = (curr_player + 1) % 4

@@ -55,9 +55,8 @@ class UnoDeck:
         self.deck = []
         for color in ['red', 'blue', 'green', 'yellow']:
             self.deck.append(UnoCard(0,color))  # one 0 of each color
-            for i in range(2):
-                for n in range(1,10):  # two of each of 1-9 of each color
-                    self.deck.append(UnoCard(n,color))
+            for n in range(1,10):  # two of each of 1-9 of each color
+                self.deck.append(UnoCard(n,color))
         random.shuffle(self.deck)  # shuffle the deck
 
     def __str__(self):
@@ -165,7 +164,7 @@ class UnoPlayer:
         self.hand.remove(card)
         pile.add_card(card)
 
-    def take_turn(self,deck,pile):
+    def take_turn(self,deck,pile,players):
         '''UnoPlayer.take_turn(deck,pile) -> None
         takes the player's turn in the game
           deck is an UnoDeck representing the current deck
@@ -179,7 +178,7 @@ class UnoPlayer:
         topcard = pile.top_card()
         matches = [card for card in self.hand if card.is_match(topcard)]
         if len(matches) > 0:  # can play
-            for index in range(len(matches)):
+            for index, matches[index] in range(len(matches)):
                 # print the playable cards with their number
                 print(str(index+1) + ": " + str(matches[index]))
             # get player's choice of which card to play
@@ -199,13 +198,68 @@ class UnoPlayer:
             # draw a new card from the deck
             newcard = self.draw_card(deck)
             print("You drew: "+str(newcard))
-            # if newcard.rank == "skip" :
-            if newcard.is_match(topcard): # can be played
+            # check if card is a skip card
+            if newcard.rank == "skip" :
+                if newcard.is_match(topcard) :
+                    print("Good -- you can play that!")
+                    self.play_card(newcard,pile)
+                    players.skip_player()
+                else:   # still can't play
+                    print("Sorry, you still can't play.")
+            # check if card is a reverse card
+            elif newcard.rank == "reverse" :
+                if newcard.is_match(topcard) :
+                    print("Good -- you can play that!")
+                    self.play_card(newcard,pile)
+                    players.reverse_player()
+                else:   # still can't play
+                    print("Sorry, you still can't play.")
+            # check if card is a draw 2 card
+            elif newcard.rank == "reverse" :
+                if newcard.is_match(topcard) :
+                    print("Good -- you can play that!")
+                    self.play_card(newcard,pile)
+                    players.draw_two()
+                else:   # still can't play
+                    print("Sorry, you still can't play.")
+            # for regular cards
+            elif newcard.is_match(topcard): # can be played
                 print("Good -- you can play that!")
                 self.play_card(newcard,pile)
             else:   # still can't play
                 print("Sorry, you still can't play.")
             input("Press enter to continue.")
+
+class Players:
+    def __init__(self) :
+        '''initializes an empty player list
+        '''
+        self.playerList = []
+        self.currPlayer = 0
+        self.nextPlayer = None
+
+    def __str__(self) :
+        '''returns the names of the players
+        '''
+        ans = ""
+        for i in range(len(self.playerList) - 1) :
+            ans += self.chain[i] + ", "
+        return ans + self.chain[len(self.playerList) - 1]
+
+    def add_player(self, player) :
+        self.playerList.append(player)
+
+    def skip_player(self) :
+        self.currPlayer += 2
+        self.nextPlayer += 2
+
+    def reverse_player(self) :
+        length = len(self.playerList)
+        self.playerList = [self.playerList[length - x - 1] for x in range(length)]
+
+    def draw_two(self) :
+        return 0
+
 
 def play_uno(numPlayers):
     '''play_uno(numPlayers) -> None
@@ -214,26 +268,27 @@ def play_uno(numPlayers):
     deck = UnoDeck()
     pile = UnoPile(deck)
     # set up the players
-    playerList = []
+    players = Players()
     for n in range(numPlayers):
         # get each player's name, then create an UnoPlayer
         name = input('Player #'+str(n+1)+', enter your name: ')
-        playerList.append(UnoPlayer(name,deck))
-    # randomly assign who goes first
-    currentPlayerNum = random.randrange(numPlayers)
+        players.add_player(UnoPlayer(name,deck))
+    # randomly assign who goes first and who goes next
+    players.currPlayer = random.randrange(numPlayers)
+    players.nextPlayer = players.currPlayer + 1
     # play the game
     while True:
         # print the game status
         print('-------')
-        for player in playerList:
+        for player in players.playerList:
             print(player)
         print('-------')
         # take a turn
-        playerList[currentPlayerNum].take_turn(deck,pile)
+        players.playerList[players.currPlayer].take_turn(deck,pile,players.playerList)
         # check for a winner
-        if playerList[currentPlayerNum].has_won():
-            print(playerList[currentPlayerNum].get_name()+" wins!")
+        if players.playerList[players.currPlayer].has_won():
+            print(players.playerList[players.currPlayer].get_name()+" wins!")
             print("Thanks for playing!")
             break
         # go to the next player
-        currentPlayerNum = (currentPlayerNum + 1) % numPlayers
+        players.currPlayer = (players.currPlayer + 1) % numPlayers
