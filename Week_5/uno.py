@@ -19,6 +19,23 @@ they do so; otherwise they add it to their hand. In either case, the player's tu
 - The first player to get rid of all of their cards wins.
 
 Write the Uno game using classes.
+
+Add the action cards to our Uno game.
+There are three types of action cards, and the deck should have 2 of each type of each color
+(so this adds 24 cards total to the deck):
+
+Skip: when played, the next player's turn is skipped.
+
+Reverse: when played, the order of play gets reversed.
+For example, if player #3 plays Reverse, then player #2 goes next, then player #1,
+and so on, until another Reverse is played, at which time the order of play gets reversed again
+back to the "normal order".
+
+Draw Two: when played, the next player must draw 2 cards, and his/her turn is skipped.
+
+These cards have the same matching rules as regular cards: for example, if when it comes to
+my turn there's a blue Skip on top of the pile, then I could play a green Skip, or a blue 2,
+or any other card that is a Skip or is blue.
 '''
 
 import random
