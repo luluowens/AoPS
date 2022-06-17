@@ -26,7 +26,7 @@ class Domino:
         '''initialize the values of a domino
         these two values need to be a number from 0 to 6
         '''
-        self.values = [value1, value2]
+        self.values = (value1, value2)
     
     def __str__(self) :
         '''returns a string for the domino
@@ -102,13 +102,13 @@ class Player:
 
     def move(self, dom, chain) :
         if dom.val1 == chain[0] :
-            chain.add_dom(dom.values, "left")
+            chain.add_dom([dom.values[1], dom.values[0]], "left")
         elif dom.val2 == chain[0] :
-            chain.add_dom(dom.values, "left")
+            chain.add_dom([dom.values[0], dom.values[1]], "left")
         elif dom.val1 == chain[-1] :
-            chain.add_dom(dom.values, "right")
+            chain.add_dom([dom.values[0], dom.values[1]], "right")
         else :
-            chain.add_dom(dom.values, "right")
+            chain.add_dom([dom.values[1], dom.values[0]], "right")
 
     def has_won(self, chain) :
         if self.can_move(chain) :
