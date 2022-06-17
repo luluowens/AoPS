@@ -236,7 +236,7 @@ class UnoPlayer:
                 if newcard.is_match(topcard) :
                     print("Good -- you can play that!")
                     self.play_card(newcard,pile)
-                    players.draw_two()
+                    players.draw_two(deck)
                 else:   # still can't play
                     print("Sorry, you still can't play.")
             # for regular cards
@@ -274,9 +274,11 @@ class Players:
         length = len(self.playerList)
         self.playerList = [self.playerList[length - x - 1] for x in range(length)]
 
-    def draw_two(self) :
-        return 0
-
+    def draw_two(self, deck) :
+        self.playerList[self.currPlayer + 1].draw_card(deck)
+        self.currPlayer += 2
+        self.nextPlayer += 2
+        
 
 def play_uno(numPlayers):
     '''play_uno(numPlayers) -> None
