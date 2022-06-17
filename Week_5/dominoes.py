@@ -22,18 +22,17 @@ import random
 
 # domino class
 class Domino:
-    def __init__(self, val1, val2) :
+    def __init__(self, value1, value2) :
         '''initialize the values of a domino
         these two values need to be a number from 0 to 6
         '''
-        self.val1 = val1
-        self.val2 = val2
+        self.values = [value1, value2]
     
     def __str__(self) :
         '''returns a string for the domino
         Eg. "1, 2"
         '''
-        return f'{self.val1}, {self.val2}'
+        return f'{self.vals[0]}, {self.vals[1]}'
 
 
 # deck class
@@ -97,19 +96,19 @@ class Player:
 
     def can_move(self, chain) :
         for dom in self.hand :
-            if dom.val1 == chain[0] or dom.val2 == chain[0] or dom.val1 == chain[-1] or dom.val2 == chain[-1] :
+            if chain[0] in dom.values or chain[-1] in dom.values :
                 return dom
         return None
 
     def move(self, dom, chain) :
         if dom.val1 == chain[0] :
-            chain.add_dom([dom.val2, dom.val1], "left")
+            chain.add_dom(dom.values, "left")
         elif dom.val2 == chain[0] :
-            chain.add_dom([dom.val1, dom.val2], "left")
+            chain.add_dom(dom.values, "left")
         elif dom.val1 == chain[-1] :
-            chain.add_dom([dom.val1, dom.val2], "right")
+            chain.add_dom(dom.values, "right")
         else :
-            chain.add_dom([dom.val2, dom.val1], "right")
+            chain.add_dom(dom.values, "right")
 
     def has_won(self, chain) :
         if self.can_move(chain) :
