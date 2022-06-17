@@ -111,6 +111,13 @@ class Player:
         else :
             chain.add_dom([dom.val2, dom.val1], "right")
 
+    def has_won(self, chain) :
+        if self.can_move(chain) :
+            dom = self.can_move(chain)
+            self.move(dom,chain)
+            return True
+        return False
+
 
 # game
 def playDominoes() :
@@ -128,7 +135,7 @@ def playDominoes() :
     curr_player = 0
     while True:
         player = players[curr_player]
-        if player.has_won() :
+        if player.has_won(chain) :
             if player == human_player :
                 print("Congratulations! You won!")
             else :
@@ -137,10 +144,12 @@ def playDominoes() :
         else :
             count = 0
             for i in range(4) :
-                if not players[i].can_move() :
+                if not players[i].can_move(chain) :
                     count += 1
             if count == 4 :
                 break
-        if player.can_move() :
-            player.play()
+        if player.can_move(chain) :
+            dom = player.can_move(chain)
+            player.move(dom,chain)
         curr_player = (curr_player + 1) % 4
+    return chain
