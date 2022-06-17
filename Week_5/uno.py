@@ -39,7 +39,6 @@ or any other card that is a Skip or is blue.
 '''
 
 import random
-from tkinter import TRUE
 
 class UnoCard:
     '''represents an Uno card
