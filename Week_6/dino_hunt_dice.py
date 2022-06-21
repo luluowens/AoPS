@@ -23,7 +23,6 @@ The player with the highest score wins.
 '''
 
 import random
-from unicodedata import name
 
 ### Die class that we previously wrote ###
 
