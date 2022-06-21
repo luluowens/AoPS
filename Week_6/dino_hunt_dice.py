@@ -198,11 +198,13 @@ def play_dino_hunt(numPlayers,numRounds):
     
     # end game
     print("The game has ended. We have a winner!")
-    winner = players[0]
+    winning_val = 0
     for player in players :
-        if player.score > winner.score :
-            winner = player
-    print(winner)
+        if player.score > winning_val :
+            winning_val = player.score
+    for player in players :
+        if player.score == winning_val :
+            print(player)
 
 
 play_dino_hunt(2,1)
