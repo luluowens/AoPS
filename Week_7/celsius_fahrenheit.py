@@ -1,3 +1,11 @@
+'''Write a GUI program to convert between Celsius and Fahrenheit temperatures.
+We've already set up the widgets for you -- you just have to write the event handlers.
+
+The formulas are:
+F = 9/5 * C + 32
+C = 5/9 * (F - 32)
+'''
+
 from tkinter import *
 
 class Temperatures(Frame):
@@ -22,7 +30,11 @@ class Temperatures(Frame):
         Button(self,text=">>>>>",command=self.fahr_to_cels).grid(row=2,column=0)
         Button(self,text="<<<<<",command=self.cels_to_fahr).grid(row=2,column=1)
 
-    # you have to write the handler methods
+    def fahr_to_cels(self) :
+        self.cels.set(DoubleVar(5/9) * (self.fahr - DoubleVar(32)))
+        
+    def cels_to_fahr(self) :
+        self.fahr.set(DoubleVar(9/5) * self.cels - DoubleVar(32))
 
 root = Tk()
 root.title('Temperature Conversion')
