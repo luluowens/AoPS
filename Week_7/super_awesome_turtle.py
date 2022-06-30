@@ -17,39 +17,55 @@ class SuperAwesomeTurtle(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
         self.move = True
-        self.speed = 0
+        # sets the turtle at 25 units per sec (1 unit per 40 milisecs)
+        self.speed = 40
         # the getscreen() method returns the Screen object that
         #    the turtle lives in
         self.getscreen().onkey(self.stop,'s')
         self.getscreen().onkey(self.quit,'q')
         self.getscreen().onkey(self.go_forward,'Up')
         self.getscreen().onkey(self.go_backward,'Down')
-        self.getscreen().onkey(self.left(90),'Left')
-        self.getscreen().onkey(self.right(90),'Right')
+        self.getscreen().onkey(self.turn_left,'Left')
+        self.getscreen().onkey(self.turn_right,'Right')
+        # starts the turtle's movement
         self.go()
 
     def go(self) :
+        # if the turtle is allowed to move, then move
         if self.move :
-            self.forward(self.speed)
+            if self.speed < 0 :
+                self.forward(-1)
+                self.getscreen().ontimer(self.go, self.speed)
+            else :
+                self.forward(1)
+                self.getscreen().ontimer(self.go, self.speed)
 
     def go_forward(self):
         self.move = True
-        self.speed += 25
+        # decrease time by 40 milisecs
+        self.speed -= 40
         self.go()
-        # self.forward(1)
-        # self.getscreen().ontimer(self.goforward,25)
             
     def go_backward(self):
         self.move = True
-        self.speed -= 25
+        # increase time by 40 milisecs
+        self.speed += 40
         self.go()
-        # self.forward(1)
-        # self.getscreen().ontimer(self.goforward,-25)
+
+    def turn_left(self) :
+        # turn to the left by 90
+        self.left(90)
+    
+    def turn_right(self) :
+        # turn to the right by 90
+        self.right(90)
 
     def stop(self):
+        # sets self.move to false so self.go will not work
         self.move = False
 
     def quit(self) :
+        # quits the screen
         self.getscreen().bye()
 
 wn = turtle.Screen()
