@@ -17,8 +17,8 @@ class SuperAwesomeTurtle(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
         self.move = True
-        # sets the turtle at 25 units per sec (1 unit per 40 milisecs)
-        self.speed = 40
+        # sets the turtle at 25 units per sec (1 unit per 40 millisecs)
+        self.speed = 1
         # the getscreen() method returns the Screen object that
         #    the turtle lives in
         self.getscreen().onkey(self.stop,'s')
@@ -33,23 +33,19 @@ class SuperAwesomeTurtle(turtle.Turtle):
     def go(self) :
         # if the turtle is allowed to move, then move
         if self.move :
-            if self.speed < 0 :
-                self.forward(-1)
-                self.getscreen().ontimer(self.go, self.speed)
-            else :
-                self.forward(1)
-                self.getscreen().ontimer(self.go, self.speed)
+            self.forward(self.speed)
+            self.getscreen().ontimer(self.go, 40)
 
     def go_forward(self):
         self.move = True
-        # decrease time by 40 milisecs
-        self.speed -= 40
+        # increase unit by 1 per 40 millisecs
+        self.speed += 1
         self.go()
             
     def go_backward(self):
         self.move = True
-        # increase time by 40 milisecs
-        self.speed += 40
+        # decrease unit by 1 per 40 millisecs
+        self.speed -= 1
         self.go()
 
     def turn_left(self) :
