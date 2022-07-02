@@ -1,6 +1,6 @@
-'''Modify our 400 Meters application from class to play 100 Meters.
+'''Modify our 400 Meters application from class to play 1500 Meters.
 The rules are the same (6 counts as -6, goal is to maximize the total score, 5 rerolls total),
-except that there are only 2 rounds, and 4 dice are thrown in each round.
+except that there are 8 rounds in which 1 die is thrown in each round.
 '''
 
 from tkinter import *
@@ -62,12 +62,12 @@ class GUIDie(Canvas):
         for pip in pipList:
             self.delete(pip)
 
-class Decath100MFrame(Frame):
-    '''frame for a game of 100 Meters'''
+class Decath1500MFrame(Frame):
+    '''frame for a game of 1500 Meters'''
 
     def __init__(self,master,name):
-        '''Decath100MFrame(master,name) -> Decath100MFrame
-        creates a new 100 Meters frame
+        '''Decath1500MFrame(master,name) -> Decath1500MFrame
+        creates a new 1500 Meters frame
         name is the name of the player'''
         # set up Frame object
         Frame.__init__(self,master)
@@ -90,18 +90,15 @@ class Decath100MFrame(Frame):
             self.dice[n].grid(row=1,column=n)
         # set up buttons
         self.rollButton = Button(self,text='Roll',command=self.roll)
-        self.rollButton.grid(row=2,columnspan=4)
+        self.rollButton.grid(row=2,columnspan=1)
         self.keepButton = Button(self,text='Keep',state=DISABLED,command=self.keep)
-        self.keepButton.grid(row=3,columnspan=4)
+        self.keepButton.grid(row=3,columnspan=1)
 
     def roll(self):
-        '''Decath100MFrame.roll()
+        '''Decath1500MFrame.roll()
         handler method for the roll button click'''
-        # roll both dice
-        self.dice[4*self.gameround].roll()
-        self.dice[4*self.gameround+1].roll()
-        self.dice[4*self.gameround+2].roll()
-        self.dice[4*self.gameround+3].roll()
+        # roll die
+        self.dice[self.gameround].roll()
         # if this was the first roll of the round, turn on the keep button
         if self.keepButton['state'] == DISABLED :
             self.keepButton['state'] = ACTIVE
@@ -112,18 +109,15 @@ class Decath100MFrame(Frame):
             self.rollButton['state'] = DISABLED
 
     def keep(self):
-        '''Decath100MFrame.keep()
+        '''Decath1500MFrame.keep()
         handler method for the keep button click'''
         # add dice to score and update the scoreboard
-        self.score += self.dice[4*self.gameround].get_top() + \
-                      self.dice[4*self.gameround+1].get_top() + \
-                      self.dice[4*self.gameround+2].get_top() + \
-                      self.dice[4*self.gameround+3].get_top()
+        self.score += self.dice[self.gameround].get_top()
         self.scoreLabel['text'] = 'Score: '+str(self.score)
         self.gameround += 1  # go to next round
-        if self.gameround < 2:  # move buttons to next pair of dice
-            self.rollButton.grid(row=2,column=4*self.gameround,columnspan=4)
-            self.keepButton.grid(row=3,column=4*self.gameround,columnspan=4)
+        if self.gameround < 8 :  # move buttons to next pair of dice
+            self.rollButton.grid(row=2,column=self.gameround,columnspan=1)
+            self.keepButton.grid(row=3,column=self.gameround,columnspan=1)
             self.rollButton['state'] = ACTIVE
             self.keepButton['state'] = DISABLED
         else:  # game over
@@ -137,7 +131,7 @@ playerList = []
 for n in range(numPlayers):
     playerList.append(input("Player "+str(n+1)+", enter your name: "))
 root = Tk()
-root.title('100 Meters')
+root.title('1500 Meters')
 for n in range(numPlayers):
-    Decath100MFrame(root,playerList[n])
+    Decath1500MFrame(root,playerList[n])
 root.mainloop()
