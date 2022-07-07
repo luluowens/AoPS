@@ -70,11 +70,11 @@ class GUIDie(Canvas):
 
 
 
-class shot_put_frame(Frame):
+class ShotPutFrame(Frame):
     '''frame for a game of Shot Put'''
 
     def __init__(self,master,name):
-        '''shot_put_frame(master,name) -> shot_put_frame
+        '''ShotPutFrame(master,name) -> ShotPutFrame
         creates a new Shot Put frame
         name is the name of the player'''
         # set up Frame object
@@ -104,7 +104,7 @@ class shot_put_frame(Frame):
         self.stopButton.grid(row=3,columnspan=1)
 
     def roll(self):
-        '''shot_put_frame.roll()
+        '''ShotPutFrame.roll()
         handler method for the roll button click'''
         # roll die
         self.dice[self.gameround].roll()
@@ -130,7 +130,7 @@ class shot_put_frame(Frame):
                 self.stopButton['state'] = ACTIVE
 
     def stop(self):
-        '''shot_put_frame.stop()
+        '''ShotPutFrame.stop()
         handler method for the stop button click'''
         self.gameround = 0 # go to next round
         # we are done with this attempt
@@ -161,5 +161,5 @@ class shot_put_frame(Frame):
 name = (input("Please enter your name: "))
 root = Tk()
 root.title('Shot Put')
-shot_put_frame(root, name)
+ShotPutFrame(root, name)
 root.mainloop()
