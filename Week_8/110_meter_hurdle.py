@@ -113,6 +113,7 @@ class Decath110MFrame(Frame):
             self.keepButton.grid_remove()
             self.rerollLabel['text'] = 'Game over'
         # add dice to score and update the scoreboard
+        self.score = 0
         for i in range(5) :
             self.score += self.dice[i].get_top()
         self.scoreLabel['text'] = 'Score: '+str(self.score)
