@@ -93,6 +93,8 @@ class GUIFreezeableDie(GUIDie):
         # create a 60x60 white canvas with a 5-pixel grooved border
         Canvas.__init__(self,master,width=60,height=60,bg='white',\
                         bd=5,relief=GROOVE)
+        self.freezeButton = Button(self,text='Freeze',command=self.toggle_freeze)
+        self.freezeButton.grid(row=2,columnspan=1)
         # store the valuelist and colorlist
         self.valueList = valueList
         self.colorList = colorList
@@ -144,31 +146,28 @@ class DiscusFrame(Frame):
         # label for player's name
         Label(self,text=name,font=('Arial',18)).grid(columnspan=3,sticky=W)
         # set up score and rerolls
-        self.scoreLabel = Label(self,text='Score: 0',font=('Arial',18))
-        self.scoreLabel.grid(row=0,column=3,columnspan=2)
-        self.rerollLabel = Label(self,text='Rerolls: 5',font=('Arial',18))
+        self.scoreLabel = Label(self,text='Attempt # 1  Score: 0',font=('Arial',18))
+        self.scoreLabel.grid(row=0,column=2,columnspan=2)
+        self.rerollLabel = Label(self,text='High Score: 0',font=('Arial',18))
         self.rerollLabel.grid(row=0,column=5,columnspan=3,sticky=E)
+        # set up directions
+        self.directionLabel = Label(self,text='Click Roll button to start',font=('Arial',18))
+        self.scoreLabel.grid(row=2,column=2,columnspan=2)
         # initialize game data
         self.score = 0
         self.rerolls = 5
         self.gameround = 0
+        self.high_score = 0
         # set up dice
         self.dice = []
         for n in range(5):
             self.dice.append(GUIDie(self,[1,2,3,4,5,-6],['black']*5+['red']))
             self.dice[n].grid(row=1,column=n)
         # set up buttons
-        self.freezeButtons = []
-        for i in range(5):
-            self.freezeButtons.append(Button(self,text='Freeze',command=self.freeze))
-            self.freezeButtons[i].grid(row=2,columnspan=1)
         self.rollButton = Button(self,text='Roll',command=self.roll)
-        self.rollButton.grid(row=2,columnspan=4)
+        self.rollButton.grid(row=1,column=6,columnspan=1)
         self.keepButton = Button(self,text='Keep',state=DISABLED,command=self.keep)
-        self.keepButton.grid(row=3,columnspan=4)
-
-    # def freeze(self) :
-    #     self.freezeButtons[]
+        self.keepButton.grid(row=2,column=6,columnspan=1)
 
     def roll(self):
         '''Decath100MFrame.roll()

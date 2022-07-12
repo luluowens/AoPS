@@ -93,6 +93,8 @@ class GUIFreezeableDie(GUIDie):
         # create a 60x60 white canvas with a 5-pixel grooved border
         Canvas.__init__(self,master,width=60,height=60,bg='white',\
                         bd=5,relief=GROOVE)
+        self.freezeButton = Button(self,text='Freeze',command=self.toggle_freeze)
+        self.freezeButton.grid(row=2,columnspan=1)
         # store the valuelist and colorlist
         self.valueList = valueList
         self.colorList = colorList
