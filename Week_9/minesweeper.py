@@ -30,7 +30,6 @@ class MineCell(Canvas) :
     def __init__(self,master,colormap = ['','blue','darkgreen','red','purple','maroon','cyan','black','dim gray']):
         '''MineCell(master,[adjacent,colorList]) -> MineCell
         creates a GUI Minesweeper Cell
-          adjacent is the list of adjacent cells
           colormap is the list of colors for different number values
         '''
         # create a 60x60 white canvas with a 5-pixel grooved border
@@ -40,10 +39,6 @@ class MineCell(Canvas) :
         self.value = 0
         self.mine = False
         self.flagged = False
-        self.adjacent = []
-        for i in self.adjacent :
-            if i.mine :
-                self.value += 1
         self.color = colormap[self.value]
         # bind a button with right-clicks to the cell
         self.bind('<Button-1>', self.press)
@@ -56,11 +51,11 @@ class MineCell(Canvas) :
     def place_mine(self) :
         self.mine = True
 
-    def set_adjacent(self, value) :
-        self.adjacent = value
+    def set_value(self, value) :
+        self.value = value
     
-    def get_adjacent(self) :
-        return self.adjacent
+    def get_value(self) :
+        return self.value
 
     def press(self, event):
         '''MineCell.press()
@@ -126,6 +121,9 @@ class MinesweeperFrame(Frame) :
 
 
     def set_up_cells(self) :
+        '''creating individual cells in self.cells
+        setting up the mines
+        '''
         # create the cols x rows cells
         for i in range(self.cols):
             for j in range(self.rows) :
@@ -145,124 +143,39 @@ class MinesweeperFrame(Frame) :
     
 
     def set_up_adjacent(self) :
-        # adjust numbers for adjacent mines
-        # case 1: cells with 8 adjacent
-        for i in range(1, self.rows) :
-            for j in range(1, self.cols) :
-                if self.cells[i][j].get_adjacent() == 0 :
+        '''adjust Cell.adjacent for adjacent mines
+        '''
+        for i in range(self.rows) :
+            for j in range(self.cols) :
+                if self.cells[i][j].get_value() == 0 :
                     adjacent = 0
-                    if self.cells[i-1][j-1].get_mine_status() :
-                        adjacent += 1
-                    elif self.cells[i][j-1].get_mine_status() :
-                        adjacent += 1
-                    elif self.cells[i+1][j-1].get_mine_status() :
-                        adjacent += 1
-                    elif self.cells[i-1][j].get_mine_status() :
-                        adjacent += 1
-                    elif self.cells[i][j].get_mine_status() :
-                        adjacent += 1
-                    elif self.cells[i+1][j].get_mine_status() :
-                        adjacent += 1
-                    elif self.cells[i-1][j+1].get_mine_status() :
-                        adjacent += 1
-                    elif self.cells[i][j+1].get_mine_status() :
-                        adjacent += 1
-                    elif self.cells[i+1][j+1].get_mine_status() :
-                        adjacent += 1
-                    self.cells[i][j].set_adjacent(adjacent)
+                    adj_cells = []
+                    # check if cell as adjacencies to its left
+                    if i > 0 :
+                        adj_cells.append(self.cells[i-1][j])
+                        if j > 0 :   # check if cell as adjacencies above
+                            adj_cells.append(self.cells[i-1][j-1])
+                        if j < self.cols :   # check if cell as adjacencies below
+                            adj_cells.append(self.cells[i-1][j+1])
+                    # check if cell has adjacencies to its right
+                    if i < self.rows :
+                        adj_cells.append(self.cells[i+1][j])
+                        if j > 0 :   # check if cell as adjacencies above
+                            adj_cells.append(self.cells[i+1][j-1])
+                        if j < self.cols :   # check if cell as adjacencies below
+                            adj_cells.append(self.cells[i+1][j+1])
+                    # while keeping the row the same...
+                    if j > 0 :   # check if cell as adjacencies above
+                        adj_cells.append(self.cells[i][j-1])
+                    if j < self.cols :   # check if cell as adjacencies below
+                        adj_cells.append(self.cells[i][j+1])
+                    # check if adjacent cells have mines
+                    for cell in adj_cells :
+                        if cell.get_mine_status() :
+                            adjacent += 1
+                    # set adjacency number
+                    self.cells[i][j].set_value(adjacent)
         
-        # adjust numbers for adjacent mines
-        # case 2: cells with 3 adjacent on top
-        for j in range(1, self.cols) :
-            if self.cells[0][j].get_adjacent() == 0 :
-                adjacent = 0
-                if self.cells[0][j-1].get_mine_status() :
-                    adjacent += 1
-                elif self.cells[0][j+1].get_mine_status() :
-                    adjacent += 1
-                elif self.cells[1][j].get_mine_status() :
-                    adjacent += 1
-                self.cells[0][j].set_adjacent(adjacent)
-        
-        # adjust numbers for adjacent mines
-        # case 3: cells with 3 adjacent on bottom
-        for j in range(1, self.cols) :
-            if self.cells[self.cols-1][j].get_adjacent() == 0 :
-                adjacent = 0
-                if self.cells[self.cols-1][j-1].get_mine_status() :
-                    adjacent += 1
-                elif self.cells[self.cols-1][j+1].get_mine_status() :
-                    adjacent += 1
-                elif self.cells[self.cols-2][j].get_mine_status() :
-                    adjacent += 1
-                self.cells[self.cols-1][j].set_adjacent(adjacent)
-
-        # adjust numbers for adjacent mines
-        # case 4: cells with 3 adjacent on left
-        for i in range(1, self.rows) :
-            if self.cells[i][0].get_adjacent() == 0 :
-                adjacent = 0
-                if self.cells[i-1][0].get_mine_status() :
-                    adjacent += 1
-                elif self.cells[i+1][0].get_mine_status() :
-                    adjacent += 1
-                elif self.cells[i][0].get_mine_status() :
-                    adjacent += 1
-                self.cells[i][0].set_adjacent(adjacent)
-
-        # adjust numbers for adjacent mines
-        # case 5: cells with 3 adjacent on right
-        for i in range(1, self.rows) :
-            if self.cells[i][self.rows-1].get_adjacent() == 0 :
-                adjacent = 0
-                if self.cells[i-1][self.rows-1].get_mine_status() :
-                    adjacent += 1
-                elif self.cells[i+1][self.rows-1].get_mine_status() :
-                    adjacent += 1
-                elif self.cells[i][self.rows-2].get_mine_status() :
-                    adjacent += 1
-                self.cells[i][self.rows-1].set_adjacent(adjacent)
-        
-        # adjust numbers for adjacent mines
-        # case 6: cells with 2 adjacent, top left
-        if self.cells[0][0].get_adjacent() == 0 :
-            adjacent = 0
-            if self.cells[1][0].get_mine_status() :
-                adjacent += 1
-            elif self.cells[0][1].get_mine_status() :
-                adjacent += 1
-            self.cells[0][0].set_adjacent(adjacent)
-        
-        # adjust numbers for adjacent mines
-        # case 7: cells with 2 adjacent, top right
-        if self.cells[0][self.cols-1].get_adjacent() == 0 :
-            adjacent = 0
-            if self.cells[1][self.cols-1].get_mine_status() :
-                adjacent += 1
-            elif self.cells[0][self.cols-2].get_mine_status() :
-                adjacent += 1
-            self.cells[0][self.cols-1].set_adjacent(adjacent)
-        
-        # adjust numbers for adjacent mines
-        # case 8: cells with 2 adjacent, bottom left
-        if self.cells[self.rows-1][0].get_adjacent() == 0 :
-            adjacent = 0
-            if self.cells[self.rows-1][1].get_mine_status() :
-                adjacent += 1
-            elif self.cells[self.rows-2][0].get_mine_status() :
-                adjacent += 1
-            self.cells[self.rows-1][0].set_adjacent(adjacent)
-        
-        # adjust numbers for adjacent mines
-        # case 9: cells with 2 adjacent, bottom right
-        if self.cells[self.rows-1][self.cols-1].get_adjacent() == 0 :
-            adjacent = 0
-            if self.cells[self.rows-1][self.cols-2].get_mine_status() :
-                adjacent += 1
-            elif self.cells[self.rows-2][self.cols-1].get_mine_status() :
-                adjacent += 1
-            self.cells[self.rows-1][self.cols-1].set_adjacent(adjacent)
-
 
     # def make_move(self) :
 
