@@ -21,6 +21,7 @@ again right-clicking on them (which also removes the asterisk).
 The game should also display the number of bombs minus the number of placed flags.
 '''
 
+from functools import total_ordering
 from tkinter import *
 import random
 
@@ -40,6 +41,8 @@ class MineCell(Canvas) :
         self.mine = False
         self.flagged = False
         self.color = colormap[self.value]
+        self.exploded = False
+        self.pressed = False
         # bind a button with right-clicks to the cell
         self.bind('<Button-1>', self.press)
         # bind a button with right-clicks to the cell
@@ -64,12 +67,14 @@ class MineCell(Canvas) :
         # check if there is a mine
         if self.mine :
             self.explode()
+            self.exploded = True
         else :
             # press cell in
             self.configure(bg='light gray')  # sets background color to gray
             self.configure(relief=SUNKEN)  # puts cell "inside" the screen
             if self.value != 0 :
                 self.create_text(17, 17, text=str(self.value), fill=self.color, font=('Arial 20'))
+            self.pressed = True # sets the cell to being pressed
 
     def flag(self, event):
         '''Minecell.flag()
@@ -98,6 +103,7 @@ class MineCell(Canvas) :
 #         self.cell_1 = MineCell(self, [], True)
 #         self.cell_1.grid()
 
+import tkinter
 
 class MinesweeperFrame(Frame) :
     '''frame for a game of Minesweeper'''
@@ -176,8 +182,21 @@ class MinesweeperFrame(Frame) :
                     # set adjacency number
                     self.cells[i][j].set_value(adjacent)
         
-
-    # def make_move(self) :
+    def make_move(self) :
+        while True :
+            total_pressed = 0
+            for cell in self.cells :
+                if cell.exploded :
+                    tkinter.messagebox.showerror('Minesweeper','KABOOM! You lose.',parent=self)
+                    break
+                elif cell.pressed :
+                    total_pressed += 1
+                elif cell.flagged :
+                    self.mineLabel['text'] = str(self.num_mines)
+                    total_pressed += 1
+            if total_pressed == self.rows * self.cols :
+                tkinter.messagebox.showinfo('Minesweeper','Congratulations -- you won!',parent=self)
+                break
 
 
 # test application
