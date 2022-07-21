@@ -131,10 +131,16 @@ class MinesweeperFrame(Frame) :
         setting up the mines
         '''
         # create the cols x rows cells
-        for i in range(self.cols):
-            for j in range(self.rows) :
-                self.cells[j].append(self)
-                self.cells[j][i].grid(row=j+1,column=i+1)
+        for i in range(self.rows):
+            row = []
+            for j in range(self.cols) :
+                row.append(MineCell(self))
+            self.cells.append(row)
+
+        # display cells
+        for i in range(self.rows) :
+            for j in range(self.cols) :
+                self.cells[i][j].grid(row=i+1,column=j+1)
         
         # set up the mines
         i = 0
@@ -161,19 +167,19 @@ class MinesweeperFrame(Frame) :
                         adj_cells.append(self.cells[i-1][j])
                         if j > 0 :   # check if cell as adjacencies above
                             adj_cells.append(self.cells[i-1][j-1])
-                        if j < self.cols :   # check if cell as adjacencies below
+                        if j < self.cols - 1 :   # check if cell as adjacencies below
                             adj_cells.append(self.cells[i-1][j+1])
                     # check if cell has adjacencies to its right
-                    if i < self.rows :
+                    if i < self.rows - 1 :
                         adj_cells.append(self.cells[i+1][j])
                         if j > 0 :   # check if cell as adjacencies above
                             adj_cells.append(self.cells[i+1][j-1])
-                        if j < self.cols :   # check if cell as adjacencies below
+                        if j < self.cols - 1:   # check if cell as adjacencies below
                             adj_cells.append(self.cells[i+1][j+1])
                     # while keeping the row the same...
                     if j > 0 :   # check if cell as adjacencies above
                         adj_cells.append(self.cells[i][j-1])
-                    if j < self.cols :   # check if cell as adjacencies below
+                    if j < self.cols - 1 :   # check if cell as adjacencies below
                         adj_cells.append(self.cells[i][j+1])
                     # check if adjacent cells have mines
                     for cell in adj_cells :
@@ -203,4 +209,5 @@ class MinesweeperFrame(Frame) :
 root = Tk()
 root.title("Minesweeper")
 # test = MineCellTest(root)
+MinesweeperFrame(root, 12, 10, 15)
 root.mainloop()
