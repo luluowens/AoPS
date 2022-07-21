@@ -21,14 +21,13 @@ again right-clicking on them (which also removes the asterisk).
 The game should also display the number of bombs minus the number of placed flags.
 '''
 
-from functools import total_ordering
 from tkinter import *
 import random
 
 class MineCell(Canvas) :
     '''1 cell of a Minesweeper game'''
 
-    def __init__(self,master,colormap = ['','blue','darkgreen','red','purple','maroon','cyan','black','dim gray']):
+    def __init__(self,master):
         '''MineCell(master,[adjacent,colorList]) -> MineCell
         creates a GUI Minesweeper Cell
           colormap is the list of colors for different number values
@@ -37,10 +36,10 @@ class MineCell(Canvas) :
         Canvas.__init__(self,master,width=25,height=25,bg='white',\
                         bd=2,relief=RAISED)
         # store the value and color of the number
+        self.colormap = ['','blue','darkgreen','red','purple','maroon','cyan','black','dim gray']
         self.value = 0
         self.mine = False
         self.flagged = False
-        self.color = colormap[self.value]
         self.exploded = False
         self.pressed = False
         # bind a button with right-clicks to the cell
@@ -72,8 +71,9 @@ class MineCell(Canvas) :
             # press cell in
             self.configure(bg='light gray')  # sets background color to gray
             self.configure(relief=SUNKEN)  # puts cell "inside" the screen
+            color = self.colormap[self.value]
             if self.value != 0 :
-                self.create_text(17, 17, text=str(self.value), fill=self.color, font=('Arial 20'))
+                self.create_text(17, 17, text=str(self.value), fill=color, font=('Arial 20'))
             self.pressed = True # sets the cell to being pressed
 
     def flag(self, event):
@@ -99,8 +99,9 @@ class MineCell(Canvas) :
 #     def __init__(self,master):
 #         Frame.__init__(self,master)
 #         self.grid()
-#         # self.cell_1 = MineCell(self, [], False)
-#         self.cell_1 = MineCell(self, [], True)
+#         self.cell_1 = MineCell(self)
+#         self.cell_1.value = 2
+#         # self.cell_1 = MineCell(self, [], True)
 #         self.cell_1.grid()
 
 import tkinter
