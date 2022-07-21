@@ -22,6 +22,7 @@ The game should also display the number of bombs minus the number of placed flag
 '''
 
 from tkinter import *
+from tkinter import messagebox
 import random
 
 class MineCell(Canvas) :
@@ -42,10 +43,12 @@ class MineCell(Canvas) :
         self.flagged = False
         self.exploded = False
         self.pressed = False
-        # bind a button with right-clicks to the cell
+        # bind a button with left-clicks to the cell
         self.bind('<Button-1>', self.press)
-        # bind a button with right-clicks to the cell
+        # bind a button with center-clicks (right-clicks trackpad users) to the cell
         self.bind('<Button-2>', self.flag)
+        # bind a button with right-clicks to the cell
+        self.bind('<Button-3>', self.flag)
 
     def get_mine_status(self) :
         return self.mine
@@ -91,6 +94,7 @@ class MineCell(Canvas) :
         # sets background color to red and draw "bomb"
         self.configure(bg='red')
         self.create_text(17, 17, text="*", fill='black', font=('Arial 20'))
+        messagebox.showerror('Minesweeper','KABOOM! You lose.',parent=self)
 
 
 # class MineCellTest(Frame):
@@ -194,7 +198,6 @@ class MinesweeperFrame(Frame) :
             total_pressed = 0
             for cell in self.cells :
                 if cell.exploded :
-                    tkinter.messagebox.showerror('Minesweeper','KABOOM! You lose.',parent=self)
                     break
                 elif cell.pressed :
                     total_pressed += 1
