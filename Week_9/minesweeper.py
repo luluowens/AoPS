@@ -43,6 +43,7 @@ class MineCell(Canvas) :
         self.flagged = False
         self.exploded = False
         self.pressed = False
+        self.flag_count = 0
         # bind a button with left-clicks to the cell
         self.bind('<Button-1>', self.press)
         # bind a button with center-clicks (right-clicks trackpad users) to the cell
@@ -51,15 +52,23 @@ class MineCell(Canvas) :
         self.bind('<Button-3>', self.flag)
 
     def get_mine_status(self) :
+        '''returns boolean for if there is a mine under this cell
+        '''
         return self.mine
 
     def place_mine(self) :
+        '''puts a mine under this cell
+        '''
         self.mine = True
 
     def set_value(self, value) :
+        '''set the number of adjacent mines
+        '''
         self.value = value
     
     def get_value(self) :
+        '''returns number of adjacent mines
+        '''
         return self.value
 
     def press(self, event):
@@ -78,14 +87,36 @@ class MineCell(Canvas) :
             if self.value != 0 :
                 self.create_text(17, 17, text=str(self.value), fill=color, font=('Arial 20'))
             self.pressed = True # sets the cell to being pressed
+        # increment total number of pressed cells
+        self.master.add_pressed_cells()
+        # check if game is over
+        self.master.game_over()
 
     def flag(self, event):
         '''Minecell.flag()
         flags the cell
         '''
-        # puts an asterisk on cell, does not change bg color
-        self.create_text(17, 17, text="*", fill='black', font=('Arial 20'))
-        self.flagged = True
+        # check if this right (or central) click is deflagging cell
+        if self.flag_count % 2 == 1 :
+            # deflag the cell
+            self.delete(self.flag)
+            self.flagged = False
+            # decrease total number of pressed cells
+            self.master.subtract_pressed_cells()
+            # decrease frame mine number
+            self.master.increase_mine_number()
+        else :
+            # puts an asterisk on cell, does not change bg color
+            self.flag = self.create_text(17, 17, text="*", fill='black', font=('Arial 20'))
+            self.flagged = True
+            # increment total number of pressed cells
+            self.master.add_pressed_cells()
+            # increase frame mine number
+            self.master.decrease_mine_number()
+            # check if game is over
+            self.master.game_over()
+        self.flag_count += 1
+        
 
     def explode(self):
         '''Minecell.explode()
@@ -94,7 +125,9 @@ class MineCell(Canvas) :
         # sets background color to red and draw "bomb"
         self.configure(bg='red')
         self.create_text(17, 17, text="*", fill='black', font=('Arial 20'))
+        # presents a "you lost" message
         messagebox.showerror('Minesweeper','KABOOM! You lose.',parent=self)
+        self.master.show_mines()
 
 
 # class MineCellTest(Frame):
@@ -107,8 +140,6 @@ class MineCell(Canvas) :
 #         self.cell_1.value = 2
 #         # self.cell_1 = MineCell(self, [], True)
 #         self.cell_1.grid()
-
-import tkinter
 
 class MinesweeperFrame(Frame) :
     '''frame for a game of Minesweeper'''
@@ -126,6 +157,7 @@ class MinesweeperFrame(Frame) :
         self.cols = cols
         self.rows = rows
         self.num_mines = num_mines
+        self.total_pressed = 0
         # set up cells
         self.cells = []
         self.set_up_cells()
@@ -157,7 +189,7 @@ class MinesweeperFrame(Frame) :
                 cell.place_mine()
                 i += 1
         self.set_up_adjacent()
-    
+
 
     def set_up_adjacent(self) :
         '''adjust Cell.adjacent for adjacent mines
@@ -193,25 +225,63 @@ class MinesweeperFrame(Frame) :
                     # set adjacency number
                     self.cells[i][j].set_value(adjacent)
         
-    def make_move(self) :
-        while True :
-            total_pressed = 0
-            for cell in self.cells :
-                if cell.exploded :
-                    break
-                elif cell.pressed :
-                    total_pressed += 1
-                elif cell.flagged :
-                    self.mineLabel['text'] = str(self.num_mines)
-                    total_pressed += 1
-            if total_pressed == self.rows * self.cols :
-                tkinter.messagebox.showinfo('Minesweeper','Congratulations -- you won!',parent=self)
-                break
+
+    def update_mine_number(self) :
+        self.mineLabel['text'] = str(self.num_mines)
+
+    def decrease_mine_number(self) :
+        '''decreases the number of mines left by 1
+        '''
+        self.num_mines -= 1
+        self.update_mine_number()
+
+    def increase_mine_number(self) :
+        '''increases the number of mines left by 1
+        this only happens when player unflags a cell
+        '''
+        self.num_mines += 1
+        self.update_mine_number()
+
+    def add_pressed_cells(self) :
+        '''increments the total number of displayed or flagged cells by 1
+        '''
+        self.total_pressed += 1
+
+    def subtract_pressed_cells(self) :
+        '''decreases the total number of displayed or flagged cells by 1
+        this only happens when player unflags a cell
+        '''
+        self.total_pressed -= 1
+
+    def game_over(self) :
+        '''check if player has won by "pressing" all cells
+        '''
+        if self.total_pressed == self.rows * self.cols :
+            messagebox.showinfo('Minesweeper','Congratulations -- you won!',parent=self)
+
+
+    def show_mines(self) :
+        '''displays all mined cells after player presses a cell with a mine
+        '''
+        for row in self.cells :
+            for cell in row :
+                if cell.mine :
+                    cell.configure(bg='red')
+                    cell.create_text(17, 17, text="*", fill='black', font=('Arial 20'))
+
+
+
+def  play_minesweeper(width,height,numBombs) :
+    '''main function that sets up a new MinesweeperFrame
+    '''
+    MinesweeperFrame(root, width, height, numBombs)
+
 
 
 # test application
 root = Tk()
 root.title("Minesweeper")
 # test = MineCellTest(root)
-MinesweeperFrame(root, 12, 10, 15)
+play_minesweeper(12, 10, 15)
+# play_minesweeper(3, 3, 1)
 root.mainloop()
