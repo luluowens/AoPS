@@ -142,6 +142,8 @@ class MineCell(Canvas) :
                 adj.configure(bg='light gray')  # sets background color to gray
                 adj.configure(relief=SUNKEN)  # puts cell "inside" the screen
                 adj.pressed = True
+                # increment total number of pressed cells
+                self.master.add_pressed_cells()
                 if adj.value == 0 :
                     # run display_adj_empties again
                     adj.display_adj_empties()
