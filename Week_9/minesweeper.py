@@ -90,8 +90,8 @@ class MineCell(Canvas) :
             else :
                 self.display_adj_empties()
             self.pressed = True # sets the cell to being pressed
-        # increment total number of pressed cells
-        self.master.add_pressed_cells()
+        # add to game's set of pressed cells
+        self.master.pressed_cells.add(self)
         # check if game is over
         self.master.game_over()
 
@@ -104,16 +104,16 @@ class MineCell(Canvas) :
             # deflag the cell
             self.delete(self.flag)
             self.flagged = False
-            # decrease total number of pressed cells
-            self.master.subtract_pressed_cells()
+            # remove from game's set of pressed cells
+            self.master.pressed_cells.remove(self)
             # decrease frame mine number
             self.master.increase_mine_number()
         else :
             # puts an asterisk on cell, does not change bg color
             self.flag = self.create_text(17, 17, text="*", fill='black', font=('Arial 20'))
             self.flagged = True
-            # increment total number of pressed cells
-            self.master.add_pressed_cells()
+            # add to game's set of pressed cells
+            self.master.pressed_cells.add(self)
             # increase frame mine number
             self.master.decrease_mine_number()
             # check if game is over
@@ -138,18 +138,21 @@ class MineCell(Canvas) :
             for adj in self.adjacent :
                 if adj.pressed :
                     continue
-                # press adjacent cell in
-                adj.configure(bg='light gray')  # sets background color to gray
-                adj.configure(relief=SUNKEN)  # puts cell "inside" the screen
-                adj.pressed = True
-                # increment total number of pressed cells
-                self.master.add_pressed_cells()
-                if adj.value == 0 :
-                    # run display_adj_empties again
-                    adj.display_adj_empties()
-                else : # this cell has a positive value
-                    color = adj.colormap[adj.value]
-                    adj.create_text(17, 17, text=str(adj.value), fill=color, font=('Arial 20'))
+                else :
+                    # press adjacent cell in
+                    adj.configure(bg='light gray')  # sets background color to gray
+                    adj.configure(relief=SUNKEN)  # puts cell "inside" the screen
+                    # add to game's set of pressed cells
+                    self.master.pressed_cells.add(adj)
+                    adj.pressed = True
+                    if adj.value == 0 :
+                        # run display_adj_empties again
+                        adj.display_adj_empties()
+                    else : # this cell has a positive value
+                        color = adj.colormap[adj.value]
+                        adj.create_text(17, 17, text=str(adj.value), fill=color, font=('Arial 20'))
+                # check if game is over
+                self.master.game_over()
 
 
 
@@ -166,11 +169,15 @@ class MinesweeperFrame(Frame) :
         self.grid()
         # label for mines left
         self.mineLabel = Label(self,text=str(num_mines),font=('Arial',18))
-        self.mineLabel.grid(row=rows+1,column=cols//2,columnspan=2)
+        if cols % 2 == 0 :
+            self.mineLabel.grid(row=rows+1,column=cols//2,columnspan=2)
+        else :
+            self.mineLabel.grid(row=rows+1,column=(cols+1)//2,columnspan=1)
         self.cols = cols
         self.rows = rows
         self.num_mines = num_mines
         self.total_pressed = 0
+        self.pressed_cells = set()
         # set up cells
         self.cells = []
         self.set_up_cells()
@@ -257,21 +264,10 @@ class MinesweeperFrame(Frame) :
         self.num_mines += 1
         self.update_mine_number()
 
-    def add_pressed_cells(self) :
-        '''increments the total number of displayed or flagged cells by 1
-        '''
-        self.total_pressed += 1
-
-    def subtract_pressed_cells(self) :
-        '''decreases the total number of displayed or flagged cells by 1
-        this only happens when player unflags a cell
-        '''
-        self.total_pressed -= 1
-
     def game_over(self) :
         '''check if player has won by "pressing" all cells
         '''
-        if self.total_pressed == self.rows * self.cols :
+        if len(self.pressed_cells) == self.rows * self.cols and self.num_mines == 0:
             messagebox.showinfo('Minesweeper','Congratulations -- you won!',parent=self)
 
 
@@ -309,6 +305,7 @@ def  play_minesweeper(width,height,numBombs) :
 root = Tk()
 root.title("Minesweeper")
 # test = MineCellTest(root)
-play_minesweeper(12, 10, 15)
-# play_minesweeper(3, 3, 1)
+# play_minesweeper(12, 10, 15)
+play_minesweeper(5, 5, 2)
+# play_minesweeper(4, 4, 2)
 root.mainloop()
