@@ -130,16 +130,6 @@ class MineCell(Canvas) :
         self.master.show_mines()
 
 
-# class MineCellTest(Frame):
-#     '''a small application to test the minesweeper cell'''
-
-#     def __init__(self,master):
-#         Frame.__init__(self,master)
-#         self.grid()
-#         self.cell_1 = MineCell(self)
-#         self.cell_1.value = 2
-#         # self.cell_1 = MineCell(self, [], True)
-#         self.cell_1.grid()
 
 class MinesweeperFrame(Frame) :
     '''frame for a game of Minesweeper'''
@@ -153,7 +143,7 @@ class MinesweeperFrame(Frame) :
         self.grid()
         # label for mines left
         self.mineLabel = Label(self,text=str(num_mines),font=('Arial',18))
-        self.mineLabel.grid(row=rows+1,columnspan=1,sticky=E)
+        self.mineLabel.grid(row=rows+1,column=cols//2,columnspan=2)
         self.cols = cols
         self.rows = rows
         self.num_mines = num_mines
@@ -276,6 +266,18 @@ def  play_minesweeper(width,height,numBombs) :
     '''
     MinesweeperFrame(root, width, height, numBombs)
 
+
+# # created this tester for testing MineCell
+# class MineCellTest(Frame):
+#     '''a small application to test the minesweeper cell'''
+
+#     def __init__(self,master):
+#         Frame.__init__(self,master)
+#         self.grid()
+#         self.cell_1 = MineCell(self)
+#         self.cell_1.value = 2
+#         # self.cell_1 = MineCell(self, [], True)
+#         self.cell_1.grid()
 
 
 # test application
