@@ -44,6 +44,7 @@ class MineCell(Canvas) :
         self.exploded = False
         self.pressed = False
         self.flag_count = 0
+        self.adjacent = []
         # bind a button with left-clicks to the cell
         self.bind('<Button-1>', self.press)
         # bind a button with center-clicks (right-clicks trackpad users) to the cell
@@ -86,6 +87,8 @@ class MineCell(Canvas) :
             color = self.colormap[self.value]
             if self.value != 0 :
                 self.create_text(17, 17, text=str(self.value), fill=color, font=('Arial 20'))
+            else :
+                self.display_adj_empties()
             self.pressed = True # sets the cell to being pressed
         # increment total number of pressed cells
         self.master.add_pressed_cells()
@@ -128,6 +131,24 @@ class MineCell(Canvas) :
         # presents a "you lost" message
         messagebox.showerror('Minesweeper','KABOOM! You lose.',parent=self)
         self.master.show_mines()
+
+    
+    def display_adj_empties(self) :
+        if self.value == 0 :
+            for adj in self.adjacent :
+                if adj.pressed :
+                    continue
+                # press adjacent cell in
+                adj.configure(bg='light gray')  # sets background color to gray
+                adj.configure(relief=SUNKEN)  # puts cell "inside" the screen
+                adj.pressed = True
+                if adj.value == 0 :
+                    # run display_adj_empties again
+                    adj.display_adj_empties()
+                else : # this cell has a positive value
+                    color = adj.colormap[adj.value]
+                    adj.create_text(17, 17, text=str(adj.value), fill=color, font=('Arial 20'))
+
 
 
 
@@ -182,7 +203,7 @@ class MinesweeperFrame(Frame) :
 
 
     def set_up_adjacent(self) :
-        '''adjust Cell.adjacent for adjacent mines
+        '''adjust cell.adjacent and cell.value for adjacent mines
         '''
         for i in range(self.rows) :
             for j in range(self.cols) :
@@ -208,6 +229,8 @@ class MinesweeperFrame(Frame) :
                         adj_cells.append(self.cells[i][j-1])
                     if j < self.cols - 1 :   # check if cell as adjacencies below
                         adj_cells.append(self.cells[i][j+1])
+                    # set adj_cells as the adjacent cells for the current cell
+                    self.cells[i][j].adjacent = adj_cells
                     # check if adjacent cells have mines
                     for cell in adj_cells :
                         if cell.get_mine_status() :
