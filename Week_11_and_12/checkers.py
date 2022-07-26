@@ -63,6 +63,16 @@ class CheckersSquare(Canvas):
         self.position = (row, col)
         # bind button click to placing a piece
         self.bind('',master.get_click)
+
+
+    def place_checker(self, color) :
+        '''CheckersSquare.place_checker(color)
+        changes color of piece on square to specified color'''
+        # remove existing piece
+        checkers = self.find_all()
+        for checker in checkers :
+            self.delete(checker)
+        self.create_oval(10,10,44,44,fill=color)
     
 
 
@@ -96,3 +106,46 @@ class CheckersBoard:
         '''CheckersBoard.get_player() -> int
         returns the current player'''
         return self.currentPlayer
+
+
+class CheckersGame(Frame):
+    '''represents a Checkers game'''
+
+    def __init__(self,master):
+        '''CheckersGame(master)
+        creates a new Checkers game'''
+        # initialize the Frame
+        Frame.__init__(self,master,bg='white')
+        self.grid()
+        # set up game data
+        self.colors = ('red','white')  # players' colors
+        # create board in starting position, player 0 going first
+        self.board = CheckersBoard()
+        self.squares = {}  # stores CheckersSquares
+        for row in range(8):
+            for column in range(8):
+                rc = (row,column)
+                self.squares[rc] = CheckersSquare(self,row,column)
+        # set up status markers
+        self.rowconfigure(8,minsize=3)  # leave a little space
+        # create turn indicator square
+        self.turnSquare = CheckersSquare(self,9,2)
+        # set background to light gray instead of almond or green
+        self.turnSquare.configure(bg='light gray')
+        # set color of checkers piece on the square
+        self.turnSquare.place_checkers(self.colors[0])
+        self.turnSquare.unbind('')
+        # set up Turn label
+        self.turnLabel = Label(self,text='Turn: ',font=('Arial',18))
+        self.turnLabel.grid(row=9,column=1)
+
+    def update_display(self):
+        '''CheckersGame.update_display()
+        updates squares to match board
+        also updates turn label square
+        '''
+        # update squares
+        for row in range(8):
+            for column in range(8):
+                coord = (row,column)
+                piece = self.board.get_piece(coord)
