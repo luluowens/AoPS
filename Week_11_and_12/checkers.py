@@ -49,37 +49,66 @@ white makes a few moves in, and that a bit later white makes one of their pieces
 from tkinter import *
 from tkinter import messagebox
 
+
 class CheckersSquare(Canvas):
     def __init__(self,master,row,col) :
         '''CheckersSquare(master,row,col)
         creates a new blank Checkers square at coordinate (row, col)'''
         # create and place the widget
-        if (row + col) % 2 == 0 :
+        if (row + col) % 2 == 1 :
             Canvas.__init__(self,master,width=50,height=50,bg='dark green')
         else :
             Canvas.__init__(self,master,width=50,height=50,bg='blanched almond')
-        self.grid(row,col)
+        self.grid(row = row,column = col)
         # set the attributes
         self.position = (row, col)
+        self.color = "red"
         # bind button click to placing a piece
-        self.bind('',master.get_click)
+        self.bind('<Button-1>', master.get_click)
 
+    def get_position(self):
+        '''CheckersSquare.get_position() -> (int,int)
+        returns (row,column) of square'''
+        return self.position
+
+    def remove_checker(self) :
+        '''CheckersSquare.remove_checker()
+        removes all checkers from the square
+        '''
+        checkers = self.find_all()
+        for checker in checkers :
+            self.delete(checker)
 
     def place_checker(self, color) :
         '''CheckersSquare.place_checker(color)
         changes color of piece on square to specified color'''
-        # remove existing piece
+        # removes any existing checkers from square
         checkers = self.find_all()
         for checker in checkers :
             self.delete(checker)
         self.create_oval(10,10,44,44,fill=color)
+
+    def select_checker(self) :
+        '''CheckersSquare.select_checker()
+        highlights the square with a black boarder
+        '''
+        self.configure(highlightthickness = 3)
+        self.configure(highlightbackground = 'black')
     
+    def deselect_checker(self) :
+        '''CheckersSquare.select_checker()
+        undoes the highlight for the square
+        '''
+        if (self.position[0] + self.position[1]) % 2 == 1 :
+            self.configure(highlightbackground = 'dark green')
+        else :
+            self.configure(highlightbackground = 'blanched almond')
 
 
-class CheckersBoard:
+class CheckersBoard :
     '''represents a board for the Checkers game'''
 
-    def __init__(self):
+    def __init__(self) :
         '''CheckersBoard()
         creates a CheckersBoard in starting position'''
         self.board = {}  # dict to store position of checkers
@@ -87,31 +116,69 @@ class CheckersBoard:
         for row in range(8):
             for col in range(8):
                 coords = (row,col)
-                if row > 4 :
-                    if (row + col) % 2 == 0 :
+                if row < 3 :
+                    if (row + col) % 2 == 1 :
                         self.board[coords] = 0  # player 0 for red
-                elif row < 4 :
-                    if (row + col) % 2 == 0 :
+                    else :
+                        self.board[coords] = -1 # empty
+                elif row > 4 :
+                    if (row + col) % 2 == 1 :
                         self.board[coords] = 1  # player 1 for white
+                    else :
+                        self.board[coords] = -1  # empty
                 else:
-                    self.board[coords] = None  # empty
+                    self.board[coords] = -1  # empty
         self.currentPlayer = 0  # player 0 (red) starts
 
-    def get_piece(self,coords):
+    def get_piece(self,coords) :
         '''CheckersBoard.get_piece(coords) -> int
         returns the piece at coords'''
         return self.board[coords]
 
-    def get_player(self):
+    def get_player(self) :
         '''CheckersBoard.get_player() -> int
         returns the current player'''
         return self.currentPlayer
 
+    def change_player(self) :
+        self.currentPlayer = 1 - self.currentPlayer
 
-class CheckersGame(Frame):
+    def is_legal_move(self,old_pos,new_pos) :
+        '''CheckersBoard.is_legal_move() -> boolean
+        returns a boolean for is the player's move is legal'''
+        # check if space is empty and next posititon is 1 away 
+        return (abs(old_pos[0] - new_pos[0]) == 1 and abs(old_pos[1] - new_pos[1]) == 1 and self.board[new_pos] == -1)
+
+    def move_checker(self, old_pos, new_pos) :
+        '''CheckersBoard.move_checker()
+        moves the checker from one square to another
+        '''
+        self.board[old_pos] = -1
+        self.board[new_pos] = self.currentPlayer
+
+    # def check_endgame(self) :
+    #     '''ReversiBoard.check_endgame()
+    #     checks if game is over
+    #     updates endgameMessage if over'''
+    #     # if current player has no legal move
+    #     if len(self.get_legal_moves()) == 0:
+    #         self.next_player()  # temporarily switch to next player
+    #         # if other player has no legal move, game is over
+    #         if len(self.get_legal_moves()) == 0:
+    #             scores = self.get_scores()
+    #             if scores[0] > scores[1]:
+    #                 self.endgame = 0
+    #             elif scores[0] < scores[1]:
+    #                 self.endgame = 1
+    #             else:
+    #                 self.endgame = 'draw'
+    #         self.next_player()  # return to original player
+
+
+class CheckersGame(Frame) :
     '''represents a Checkers game'''
 
-    def __init__(self,master):
+    def __init__(self,master) :
         '''CheckersGame(master)
         creates a new Checkers game'''
         # initialize the Frame
@@ -122,30 +189,100 @@ class CheckersGame(Frame):
         # create board in starting position, player 0 going first
         self.board = CheckersBoard()
         self.squares = {}  # stores CheckersSquares
-        for row in range(8):
-            for column in range(8):
+        for row in range(8) :
+            for column in range(8) :
                 rc = (row,column)
                 self.squares[rc] = CheckersSquare(self,row,column)
         # set up status markers
-        self.rowconfigure(8,minsize=3)  # leave a little space
+        self.rowconfigure(8,minsize=1)  # leave a little space
         # create turn indicator square
         self.turnSquare = CheckersSquare(self,9,2)
         # set background to light gray instead of almond or green
         self.turnSquare.configure(bg='light gray')
         # set color of checkers piece on the square
-        self.turnSquare.place_checkers(self.colors[0])
+        self.turnSquare.place_checker(self.colors[0])
+        self.turnSquare.configure(highlightbackground='light gray')
         self.turnSquare.unbind('')
         # set up Turn label
         self.turnLabel = Label(self,text='Turn: ',font=('Arial',18))
         self.turnLabel.grid(row=9,column=1)
+        # set up click status
+        self.click = False
+        self.old_coord = (0,0)
+        # update
+        self.update_display()
 
-    def update_display(self):
+    def get_click(self, event) :
+        '''CheckersGame.get_click(event)
+        event handler for mouse click
+        gets click data and tries to make the move'''
+        coords = event.widget.get_position()
+        if self.click == False :
+            self.old_coord = coords
+            square = self.squares[coords]
+            square.select_checker()
+            self.click = True
+            self.update_display()  # update the display
+        elif self.board.is_legal_move(self.old_coord, coords) :
+            square = self.squares[self.old_coord]
+            square.deselect_checker()
+            self.click = False
+            self.board.move_checker(self.old_coord, coords)
+            self.update_display()  # update the display
+            self.board.change_player()
+        self.update_display()
+
+    def update_display(self) :
         '''CheckersGame.update_display()
         updates squares to match board
         also updates turn label square
         '''
         # update squares
-        for row in range(8):
-            for column in range(8):
+        for row in range(8) :
+            for column in range(8) :
                 coord = (row,column)
                 piece = self.board.get_piece(coord)
+                if piece != -1 :
+                    self.squares[coord].place_checker(self.colors[piece])
+                else :
+                    self.squares[coord].remove_checker()
+        # update the turn indicator
+        newPlayer = self.board.get_player()
+        self.turnSquare.place_checker(self.colors[newPlayer])
+        self.turnSquare.configure(highlightbackground='light gray')
+
+
+
+
+# created this tester for testing CheckersSquare
+class CheckersSquareTest(Frame):
+    '''a small application to test the checkers square'''
+
+    def __init__(self,master):
+        Frame.__init__(self,master)
+        self.grid()
+        self.cell = CheckersSquare(self, 0, 0)
+
+
+# created this tester for testing CheckersGame
+class CheckersGameTest(Frame):
+    '''a small application to test the checkers game'''
+
+    def __init__(self,master):
+        Frame.__init__(self,master)
+        self.grid()
+        self.board = CheckersGame(master)
+
+
+def play_checkers() :
+    # test application
+    root = Tk()
+    root.title("Checkers")
+    # test = CheckersSquareTest(root)
+    test = CheckersGameTest(root)
+    # play_minesweeper(12, 10, 15)
+    # play_minesweeper(5, 5, 2)
+    # play_minesweeper(4, 4, 2)
+    root.mainloop()
+
+play_checkers()
