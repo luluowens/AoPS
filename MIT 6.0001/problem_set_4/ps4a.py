@@ -22,14 +22,14 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
-    permutations = []
     if len(sequence) == 1 :
         return [sequence]
-    for letter in sequence :
-        new_sequence = sequence.replace(letter, "")
-        permutations = [letter + perm for perm in get_permutations(new_sequence)]
-    return permutations
-
+    perms = []
+    first = sequence[0]
+    for perm in get_permutations(sequence[1:]) :
+        for i in range(len(perm)+1) :
+            perms.append(perm[:i] + first + perm[i:])
+    return perms
 
 if __name__ == '__main__':
    #EXAMPLE

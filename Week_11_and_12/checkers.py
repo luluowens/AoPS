@@ -128,7 +128,10 @@ class CheckersBoard :
                         self.board[coords] = -1  # empty
                 else:
                     self.board[coords] = -1  # empty
-        self.currentPlayer = 0  # player 0 (red) starts
+        # player 0 (red) starts
+        self.currentPlayer = 0
+        # keeps track of if a player needs to jump again
+        self.jump_again = False
 
     def get_piece(self,coords) :
         '''CheckersBoard.get_piece(coords) -> int
@@ -140,17 +143,82 @@ class CheckersBoard :
         returns the current player'''
         return self.currentPlayer
 
+    def get_jump_again(self) :
+        '''CheckersBoard.get_jump_again() -> bool
+        returns the jump again status'''
+        return self.jump_again
+
+    def set_jump_again(self, val) :
+        '''CheckersBoard.set_jump_again(val)
+        sets the jump again status'''
+        self.jump_again = val
+
     def change_player(self) :
+        '''CheckersBoard.change_player()
+        changes the player to the other player
+        '''
         self.currentPlayer = 1 - self.currentPlayer
 
     def is_legal_move(self,old_pos,new_pos) :
-        '''CheckersBoard.is_legal_move() -> boolean
+        '''CheckersBoard.is_legal_move(old_pos, new_pos) -> boolean
         returns a boolean for is the player's move is legal'''
-        # check if space is empty and next posititon is 1 away 
-        return (abs(old_pos[0] - new_pos[0]) == 1 and abs(old_pos[1] - new_pos[1]) == 1 and self.board[new_pos] == -1)
+        # check if the jump is legal
+        if self.is_legal_jump(old_pos, new_pos) :
+            return True
+        elif self.currentPlayer == 0 :
+            # check if space is empty and next posititon is 1 away 
+            return (new_pos[0] - old_pos[0] == 1 and abs(new_pos[1] - old_pos[1]) == 1 and self.board[new_pos] == -1)
+        elif self.currentPlayer == 1 :
+            # check if space is empty and next posititon is 1 away 
+            return (old_pos[0] - new_pos[0] == 1 and abs(old_pos[1] - new_pos[1]) == 1 and self.board[new_pos] == -1)
+
+    def is_legal_jump(self, old_pos, new_pos) :
+        '''CheckersBoard.is_legal_jump(old_pos, new_pos) -> boolean
+        checks to see if the jump is legal
+        returns a boolean
+        '''
+        if abs(old_pos[0] - new_pos[0]) == 2 and abs(old_pos[1] - new_pos[1]) == 2 and self.board[new_pos] == -1 :
+            mid_square = ((old_pos[0] + new_pos[0]) // 2, (old_pos[1] + new_pos[1]) // 2)
+            if self.board[mid_square] == 1 - self.currentPlayer :
+                self.board[mid_square] = -1
+                # checks to see if another jump is okay
+                if self.check_possible_jumps(new_pos) != (-1, -1) :
+                    self.jump_again = True
+                return True
+        return False
+
+    def check_possible_jumps(self, curr_pos) :
+        '''CheckersBoard.check_possible_jumps(curr_pos)
+        checks to see if the checker can jump again
+        if so, returns the position
+        else, return (-1, -1)
+        '''
+        # seeing if the player is red or white
+        # player is red
+        if self.currentPlayer == 0 :
+            position_1 = (curr_pos[0] + 1, curr_pos[1] + 1)
+            new_pos_1 = (curr_pos[0] + 2, curr_pos[1] + 2)
+            position_2 = (curr_pos[0] + 1, curr_pos[1] - 1)
+            new_pos_2 = (curr_pos[0] + 2, curr_pos[1] - 2)
+            if self.board[position_1] == 1 and self.board[new_pos_1] == -1 :
+                return new_pos_1
+            elif self.board[position_2] == 1 and self.board[new_pos_2] == -1 :
+                return new_pos_2
+        # player is white
+        elif self.currentPlayer == 1 :
+            position_1 = (curr_pos[0] - 1, curr_pos[1] + 1)
+            new_pos_1 = (curr_pos[0] - 2, curr_pos[1] + 2)
+            position_2 = (curr_pos[0] - 1, curr_pos[1] - 1)
+            new_pos_2 = (curr_pos[0] - 2, curr_pos[1] - 2)
+            if self.board[position_1] == 0 and self.board[new_pos_1] == -1 :
+                return new_pos_1
+            elif self.board[position_2] == 0 and self.board[new_pos_2] == -1 :
+                return new_pos_2
+        # if no position was returned, return (-1, -1)
+        return (-1, -1)
 
     def move_checker(self, old_pos, new_pos) :
-        '''CheckersBoard.move_checker()
+        '''CheckersBoard.move_checker(old_pos, new_pos)
         moves the checker from one square to another
         '''
         self.board[old_pos] = -1
@@ -206,9 +274,13 @@ class CheckersGame(Frame) :
         # set up Turn label
         self.turnLabel = Label(self,text='Turn: ',font=('Arial',18))
         self.turnLabel.grid(row=9,column=1)
+        # set up Jump Again label
+        self.jumpLabel = Label(self,text='',font=('Arial',18))
+        self.jumpLabel.grid(row=9,column=4,columnspan=4)
         # set up click status
         self.click = False
         self.old_coord = (0,0)
+        self.change_player = True
         # update
         self.update_display()
 
@@ -217,19 +289,38 @@ class CheckersGame(Frame) :
         event handler for mouse click
         gets click data and tries to make the move'''
         coords = event.widget.get_position()
-        if self.click == False :
-            self.old_coord = coords
-            square = self.squares[coords]
-            square.select_checker()
-            self.click = True
-            self.update_display()  # update the display
-        elif self.board.is_legal_move(self.old_coord, coords) :
-            square = self.squares[self.old_coord]
-            square.deselect_checker()
-            self.click = False
-            self.board.move_checker(self.old_coord, coords)
-            self.update_display()  # update the display
-            self.board.change_player()
+        if self.board.get_jump_again() == True :
+            self.jumpLabel['text'] = "Must continue jump!"
+            if coords == self.board.check_possible_jumps(self.old_coord) :
+                square = self.squares[self.old_coord]
+                square.deselect_checker()
+                self.click = False
+                self.board.move_checker(self.old_coord, coords)
+                self.update_display()  # update the display
+                self.board.change_player()
+                self.board.set_jump_again(False)
+        else :
+            if self.click == False :
+                self.old_coord = coords
+                square = self.squares[coords]
+                square.select_checker()
+                self.click = True
+                self.update_display()  # update the display
+            elif self.board.is_legal_move(self.old_coord, coords) :
+                square = self.squares[self.old_coord]
+                square.deselect_checker()
+                self.click = False
+                if self.board.is_legal_jump(self.old_coord, coords) :
+                    if self.board.check_possible_jumps(coords) != (-1, -1) :
+                        self.change_player = False
+                self.board.move_checker(self.old_coord, coords)
+                self.update_display()  # update the display
+                if self.change_player :
+                    self.board.change_player()
+            else :
+                square = self.squares[self.old_coord]
+                square.deselect_checker()
+                self.click = False
         self.update_display()
 
     def update_display(self) :
