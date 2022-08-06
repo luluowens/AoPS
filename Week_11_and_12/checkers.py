@@ -63,6 +63,7 @@ class CheckersSquare(Canvas):
         # set the attributes
         self.position = (row, col)
         self.color = "red"
+        self.king = False
         # bind button click to placing a piece
         self.bind('<Button-1>', master.get_click)
 
@@ -104,6 +105,13 @@ class CheckersSquare(Canvas):
         else :
             self.configure(highlightbackground = 'blanched almond')
 
+    def make_king(self) :
+        '''CheckersSquare.make_king()
+        makes the checker a king
+        '''
+        self.king = True
+        self.create_text(28, 38, text="*", fill="black", font=('Arial 50'))
+
 
 class CheckersBoard :
     '''represents a board for the Checkers game'''
@@ -131,7 +139,8 @@ class CheckersBoard :
         # player 0 (red) starts
         self.currentPlayer = 0
         # keeps track of if a player needs to jump again
-        self.jump_again = False
+        self.new_coords = (0,0)
+        self.jump = False
 
     def get_piece(self,coords) :
         '''CheckersBoard.get_piece(coords) -> int
@@ -153,6 +162,16 @@ class CheckersBoard :
         sets the jump again status'''
         self.jump_again = val
 
+    def get_row(self, row) :
+        '''CheckersBoard.get_row(row)
+        returns the row in the board
+        '''
+        row_squares = []
+        for element in self.board :
+            if element[0] == row :
+                row_squares.append([element, self.board[element]])
+        return row_squares
+
     def change_player(self) :
         '''CheckersBoard.change_player()
         changes the player to the other player
@@ -164,83 +183,105 @@ class CheckersBoard :
         returns a boolean for is the player's move is legal'''
         # check if the jump is legal
         if self.is_legal_jump(old_pos, new_pos) :
+            self.jump = True
             return True
         elif self.currentPlayer == 0 :
-            # check if space is empty and next posititon is 1 away 
+            self.jump = False
+            # check if space is empty and next posititon is 1 away (only backward)
             return (new_pos[0] - old_pos[0] == 1 and abs(new_pos[1] - old_pos[1]) == 1 and self.board[new_pos] == -1)
         elif self.currentPlayer == 1 :
-            # check if space is empty and next posititon is 1 away 
+            self.jump = False
+            # check if space is empty and next posititon is 1 away (only forward)
             return (old_pos[0] - new_pos[0] == 1 and abs(old_pos[1] - new_pos[1]) == 1 and self.board[new_pos] == -1)
+
+    def is_legal_king(self, old_pos, new_pos) :
+        if self.is_legal_king_jump(old_pos, new_pos) :
+            self.jump = True
+            return True
+        else :
+            self.jump = False
+            # check if space is empty and next posititon is 1 away (only forward)
+            return (abs(old_pos[0] - new_pos[0]) == 1 and abs(old_pos[1] - new_pos[1]) == 1 and self.board[new_pos] == -1)
 
     def is_legal_jump(self, old_pos, new_pos) :
         '''CheckersBoard.is_legal_jump(old_pos, new_pos) -> boolean
         checks to see if the jump is legal
         returns a boolean
         '''
-        if abs(old_pos[0] - new_pos[0]) == 2 and abs(old_pos[1] - new_pos[1]) == 2 and self.board[new_pos] == -1 :
+        if self.currentPlayer == 0 :
+            if (new_pos[0] - old_pos[0] == 2 and abs(new_pos[1] - old_pos[1]) == 2 and self.board[new_pos] == -1) :
+                mid_square = ((old_pos[0] + new_pos[0]) // 2, (old_pos[1] + new_pos[1]) // 2)
+                if self.board[mid_square] == 1 - self.currentPlayer :
+                    self.board[mid_square] = -1
+                    return True
+        elif self.currentPlayer == 1 :
+            if (old_pos[0] - new_pos[0] == 2 and abs(old_pos[1] - new_pos[1]) == 2 and self.board[new_pos] == -1) :
+                mid_square = ((old_pos[0] + new_pos[0]) // 2, (old_pos[1] + new_pos[1]) // 2)
+                if self.board[mid_square] == 1 - self.currentPlayer :
+                    self.board[mid_square] = -1
+                    return True
+        return False
+
+    def is_legal_king_jump(self, old_pos, new_pos) :
+        if (abs(old_pos[0] - new_pos[0]) == 2 and abs(old_pos[1] - new_pos[1]) == 2 and self.board[new_pos] == -1) :
             mid_square = ((old_pos[0] + new_pos[0]) // 2, (old_pos[1] + new_pos[1]) // 2)
             if self.board[mid_square] == 1 - self.currentPlayer :
                 self.board[mid_square] = -1
-                # checks to see if another jump is okay
-                if self.check_possible_jumps(new_pos) != (-1, -1) :
-                    self.jump_again = True
                 return True
         return False
 
     def check_possible_jumps(self, curr_pos) :
         '''CheckersBoard.check_possible_jumps(curr_pos)
         checks to see if the checker can jump again
-        if so, returns the position
-        else, return (-1, -1)
+        returns if the checker can jump again
         '''
         # seeing if the player is red or white
         # player is red
         if self.currentPlayer == 0 :
-            position_1 = (curr_pos[0] + 1, curr_pos[1] + 1)
-            new_pos_1 = (curr_pos[0] + 2, curr_pos[1] + 2)
-            position_2 = (curr_pos[0] + 1, curr_pos[1] - 1)
-            new_pos_2 = (curr_pos[0] + 2, curr_pos[1] - 2)
-            if self.board[position_1] == 1 and self.board[new_pos_1] == -1 :
-                return new_pos_1
-            elif self.board[position_2] == 1 and self.board[new_pos_2] == -1 :
-                return new_pos_2
+            if curr_pos[0] + 2 >= 0 and curr_pos[0] + 2 <= 7 and curr_pos[1] + 2 >= 0 and curr_pos[1] + 2 <= 7 :
+                position_1 = (curr_pos[0] + 1, curr_pos[1] + 1)
+                new_pos_1 = (curr_pos[0] + 2, curr_pos[1] + 2)
+                if self.board[position_1] == 1 and self.board[new_pos_1] == -1 :
+                    self.new_coords = new_pos_1
+                    self.jump_again = True
+                    return True
+                if curr_pos[1] - 2 >= 0 and curr_pos[1] - 2 <= 7 :
+                    position_2 = (curr_pos[0] + 1, curr_pos[1] - 1)
+                    new_pos_2 = (curr_pos[0] + 2, curr_pos[1] - 2)
+                    if self.board[position_2] == 1 and self.board[new_pos_2] == -1 :
+                        self.new_coords = new_pos_2
+                        self.jump_again = True
+                        return True
         # player is white
         elif self.currentPlayer == 1 :
-            position_1 = (curr_pos[0] - 1, curr_pos[1] + 1)
-            new_pos_1 = (curr_pos[0] - 2, curr_pos[1] + 2)
-            position_2 = (curr_pos[0] - 1, curr_pos[1] - 1)
-            new_pos_2 = (curr_pos[0] - 2, curr_pos[1] - 2)
-            if self.board[position_1] == 0 and self.board[new_pos_1] == -1 :
-                return new_pos_1
-            elif self.board[position_2] == 0 and self.board[new_pos_2] == -1 :
-                return new_pos_2
-        # if no position was returned, return (-1, -1)
-        return (-1, -1)
+            if curr_pos[0] - 2 >= 0 and curr_pos[0] - 2 <= 7 and curr_pos[1] + 2 >= 0 and curr_pos[1] + 2 <= 7 :
+                position_1 = (curr_pos[0] - 1, curr_pos[1] + 1)
+                new_pos_1 = (curr_pos[0] - 2, curr_pos[1] + 2)
+                if self.board[position_1] == 0 and self.board[new_pos_1] == -1 :
+                    self.new_coords = new_pos_1
+                    self.jump_again = True
+                    return True
+                if curr_pos[1] - 2 >= 0 and curr_pos[1] - 2 <= 7 :
+                    position_2 = (curr_pos[0] - 1, curr_pos[1] - 1)
+                    new_pos_2 = (curr_pos[0] - 2, curr_pos[1] - 2)
+                    if self.board[position_2] == 0 and self.board[new_pos_2] == -1 :
+                        self.new_coords = new_pos_2
+                        self.jump_again = True
+                        return True
+        # if no position was returned, return False
+        self.jump_again = False
+        return False
 
     def move_checker(self, old_pos, new_pos) :
         '''CheckersBoard.move_checker(old_pos, new_pos)
         moves the checker from one square to another
         '''
+        if abs(old_pos[0] - new_pos[0]) == 2 and abs(old_pos[1] - new_pos[1]) == 2 :
+            mid_square = ((old_pos[0] + new_pos[0]) // 2, (old_pos[1] + new_pos[1]) // 2)
+            self.board[mid_square] = -1
         self.board[old_pos] = -1
         self.board[new_pos] = self.currentPlayer
 
-    # def check_endgame(self) :
-    #     '''ReversiBoard.check_endgame()
-    #     checks if game is over
-    #     updates endgameMessage if over'''
-    #     # if current player has no legal move
-    #     if len(self.get_legal_moves()) == 0:
-    #         self.next_player()  # temporarily switch to next player
-    #         # if other player has no legal move, game is over
-    #         if len(self.get_legal_moves()) == 0:
-    #             scores = self.get_scores()
-    #             if scores[0] > scores[1]:
-    #                 self.endgame = 0
-    #             elif scores[0] < scores[1]:
-    #                 self.endgame = 1
-    #             else:
-    #                 self.endgame = 'draw'
-    #         self.next_player()  # return to original player
 
 
 class CheckersGame(Frame) :
@@ -281,6 +322,8 @@ class CheckersGame(Frame) :
         self.click = False
         self.old_coord = (0,0)
         self.change_player = True
+        self.jump_pos = (0,0)
+        self.jump_again = False
         # update
         self.update_display()
 
@@ -289,16 +332,23 @@ class CheckersGame(Frame) :
         event handler for mouse click
         gets click data and tries to make the move'''
         coords = event.widget.get_position()
-        if self.board.get_jump_again() == True :
-            self.jumpLabel['text'] = "Must continue jump!"
-            if coords == self.board.check_possible_jumps(self.old_coord) :
+        if self.jump_again == True :
+            if coords == self.jump_pos :
                 square = self.squares[self.old_coord]
                 square.deselect_checker()
                 self.click = False
                 self.board.move_checker(self.old_coord, coords)
+                mid = ((self.old_coord[0] + coords[0]) // 2, (self.old_coord[1] + coords[1]) // 2)
+                self.squares[mid].king = False
+                if self.squares[self.old_coord].king == True :
+                    self.squares[self.old_coord].king = False
+                    self.squares[coords].king = True
+                self.check_kings()
                 self.update_display()  # update the display
                 self.board.change_player()
-                self.board.set_jump_again(False)
+                self.change_player = True
+                self.jump_again = False
+                self.jumpLabel['text'] = ""
         else :
             if self.click == False :
                 self.old_coord = coords
@@ -306,14 +356,44 @@ class CheckersGame(Frame) :
                 square.select_checker()
                 self.click = True
                 self.update_display()  # update the display
+            elif self.squares[self.old_coord].king == True :
+                if self.board.is_legal_king(self.old_coord, coords) :
+                    square = self.squares[self.old_coord]
+                    square.deselect_checker()
+                    self.squares[self.old_coord].king = False
+                    self.squares[coords].king = True
+                    self.click = False
+                    self.board.move_checker(self.old_coord, coords)
+                    if self.board.jump == True :
+                        if self.board.check_possible_jumps(coords) == True :
+                            self.old_coord = coords
+                            self.jump_pos = self.board.new_coords
+                            self.change_player = False
+                            self.jumpLabel['text'] = "Must continue jump!"
+                            self.jump_again = True
+                            self.click = True
+                            self.squares[coords].select_checker()
+                    self.squares[self.old_coord].king = False
+                    self.squares[coords].king = True
+                    self.update_display()  # update the display
+                    if self.change_player :
+                        self.board.change_player()
             elif self.board.is_legal_move(self.old_coord, coords) :
                 square = self.squares[self.old_coord]
                 square.deselect_checker()
                 self.click = False
-                if self.board.is_legal_jump(self.old_coord, coords) :
-                    if self.board.check_possible_jumps(coords) != (-1, -1) :
-                        self.change_player = False
                 self.board.move_checker(self.old_coord, coords)
+                if self.board.jump == True :
+                    mid = ((self.old_coord[0] + coords[0]) // 2, (self.old_coord[1] + coords[1]) // 2)
+                    self.squares[mid].king = False
+                    if self.board.check_possible_jumps(coords) == True :
+                        self.old_coord = coords
+                        self.jump_pos = self.board.new_coords
+                        self.change_player = False
+                        self.jumpLabel['text'] = "Must continue jump!"
+                        self.jump_again = True
+                        self.click = True
+                        self.squares[coords].select_checker()
                 self.update_display()  # update the display
                 if self.change_player :
                     self.board.change_player()
@@ -321,7 +401,11 @@ class CheckersGame(Frame) :
                 square = self.squares[self.old_coord]
                 square.deselect_checker()
                 self.click = False
+        self.check_kings()
         self.update_display()
+        if self.check_endgame() :
+            message = 'Congratulations -- ' + self.colors[self.board.currentPlayer] + ' Player won!'
+            messagebox.showinfo('Checkers', message, parent=self)
 
     def update_display(self) :
         '''CheckersGame.update_display()
@@ -334,7 +418,11 @@ class CheckersGame(Frame) :
                 coord = (row,column)
                 piece = self.board.get_piece(coord)
                 if piece != -1 :
-                    self.squares[coord].place_checker(self.colors[piece])
+                    if self.squares[coord].king :
+                        self.squares[coord].place_checker(self.colors[piece])
+                        self.squares[coord].make_king()
+                    else :
+                        self.squares[coord].place_checker(self.colors[piece])
                 else :
                     self.squares[coord].remove_checker()
         # update the turn indicator
@@ -342,7 +430,31 @@ class CheckersGame(Frame) :
         self.turnSquare.place_checker(self.colors[newPlayer])
         self.turnSquare.configure(highlightbackground='light gray')
 
+    def check_kings(self) :
+        row = self.board.get_row(0)
+        for square in row :
+            if square[1] == 1 :
+                self.squares[square[0]].make_king()
+                # self.board.promote_checker(square[0], 1)
+        row = self.board.get_row(7)
+        for square in row :
+            if square[1] == 0 :
+                self.squares[square[0]].make_king()
+                # self.board.promote_checker(square[0], 0)
 
+    def check_endgame(self) :
+        '''CheckersGame.check_endgame()
+        checks if game is over
+        updates endgameMessage if over'''
+        count = 0
+        for row in range(8) :
+            for col in range(8) :
+                if self.board.get_piece((row,col)) == self.board.get_player() :
+                    count += 1
+        if count > 0 :
+            return False
+        else :
+            return True
 
 
 # created this tester for testing CheckersSquare
@@ -353,6 +465,7 @@ class CheckersSquareTest(Frame):
         Frame.__init__(self,master)
         self.grid()
         self.cell = CheckersSquare(self, 0, 0)
+        self.cell.make_king()
 
 
 # created this tester for testing CheckersGame
@@ -371,9 +484,6 @@ def play_checkers() :
     root.title("Checkers")
     # test = CheckersSquareTest(root)
     test = CheckersGameTest(root)
-    # play_minesweeper(12, 10, 15)
-    # play_minesweeper(5, 5, 2)
-    # play_minesweeper(4, 4, 2)
     root.mainloop()
 
 play_checkers()
